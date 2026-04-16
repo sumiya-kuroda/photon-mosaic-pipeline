@@ -51,7 +51,7 @@ def find_raw_data_paths(
         allow_letters_in_sub_ses_values=True,
     )
 
-    raw_data_paths = []
+    raw_data_paths: list[Path] = []
     for pattern in tiff_patterns:
         raw_data_paths.extend(
             project_path.rglob(f"{_RAWDATA}/sub-*/ses-*/funcimg/{pattern}")
@@ -79,7 +79,8 @@ def find_raw_data_paths(
         ]
 
     logger.info(
-        f"Found {len(raw_data_paths)} TIFF file(s) under {project_path}/{_RAWDATA}"
+        f"Found {len(raw_data_paths)} TIFF file(s) "
+        f"under {project_path / _RAWDATA}"
     )
     return raw_data_paths
 
