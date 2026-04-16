@@ -1,16 +1,13 @@
 """
 Preprocessing Module
-
 This Snakefile module handles the preprocessing step of the photon mosaic pipeline.
 It processes raw TIFF files from discovered datasets and applies preprocessing
 operations defined in the configuration.
-
 The preprocessing rule:
 - Takes raw TIFF files as input from the dataset discovery
 - Applies preprocessing operations (defined in config["preprocessing"])
 - Outputs processed files in a standardized NeuroBlueprint format
 - Supports SLURM cluster execution with configurable resources
-
 Input: Raw TIFF files from discovered datasets
 Output: Preprocessed TIFF files organized by subject/session
 """
@@ -18,76 +15,74 @@ Output: Preprocessed TIFF files organized by subject/session
 from pathlib import Path
 from photon_mosaic.rules.preprocessing import run_preprocessing
 from photon_mosaic.snakemake_utils import cross_platform_path
+from photon_mosaic.paths_selection import _RAWDATA, _DERIVATIVES
 import re
 import logging
 import os
+
+# Configure SLURM resources if enabled
+slurm_config = config.get("slurm", {}) if config.get("use_slurm") else {}
+
+
+def _get_raw_tiff_for_wildcards(wildcards):
+    match = next(
+        (
+            p
+            for p in all_selected_tiff_paths
+            if p.parts[p.parts.index(_RAWDATA) + 1] == wildcards.subject_name
+            and p.parts[p.parts.index(_RAWDATA) + 2] == wildcards.session_name
+            and p.name == wildcards.tiff
+        ),
+        None,
+    )
+    if match is None:
+        raise ValueError(
+            f"No raw TIFF found for subject={wildcards.subject_name}, "
+            f"session={wildcards.session_name}, tiff={wildcards.tiff}"
+        )
+    return cross_platform_path(match)
 
 
 # Preprocessing rule
 rule preprocessing:
     input:
-        img=lambda wildcards: cross_platform_path(
-            raw_data_base
-            / discoverer.original_datasets[
-                discoverer.transformed_datasets.index(wildcards.subject_name)
-            ]
-            / discoverer.get_tiff_relative_path_for_subject_session_file(
-                wildcards.subject_name,
-                discoverer.extract_session_idx_from_session_name(
-                    wildcards.session_name
-                ),
-                wildcards.tiff,
-            )
-        ),
+        img=_get_raw_tiff_for_wildcards,
     output:
         processed=cross_platform_path(
-            Path(processed_data_base).resolve()
+            project_path
+            / _DERIVATIVES
             / "{subject_name}"
             / "{session_name}"
             / "funcimg"
             / (f"{output_pattern}" + "{tiff}")
         ),
     params:
-        dataset_folder=lambda wildcards: cross_platform_path(
-            raw_data_base
-            / discoverer.original_datasets[
-                discoverer.transformed_datasets.index(wildcards.subject_name)
-            ]
-        ),
-        output_folder=lambda wildcards: cross_platform_path(
-            Path(processed_data_base).resolve()
+        raw_session_folder=lambda wildcards: cross_platform_path(
+            project_path
+            / _RAWDATA
             / wildcards.subject_name
             / wildcards.session_name
             / "funcimg"
         ),
-        ses_idx=lambda wildcards: discoverer.extract_session_idx_from_session_name(
-            wildcards.session_name
+        output_folder=lambda wildcards: cross_platform_path(
+            project_path
+            / _DERIVATIVES
+            / wildcards.subject_name
+            / wildcards.session_name
+            / "funcimg"
         ),
     wildcard_constraints:
-        tiff=("|".join(sorted([Path(f).name for f in all_selected_tiff_paths]))),
-        subject_name="|".join(discoverer.transformed_datasets),
-        session_name="|".join(
-            [
-                discoverer.get_session_name(i, session_idx)
-                for i in range(len(discoverer.transformed_datasets))
-                for session_idx in discoverer.tiff_files[
-                    discoverer.original_datasets[i]
-                ].keys()
-            ]
-        ),
+        tiff="|".join(sorted({p.name for p in all_selected_tiff_paths})),
+        subject_name="|".join(_subject_names),
+        session_name="|".join(_session_names),
     resources:
         **(slurm_config if config.get("use_slurm") else {}),
     run:
         from photon_mosaic.rules.preprocessing import run_preprocessing
-        from photon_mosaic import log_cuda_availability
-
-        # Check CUDA availability for this job
-        log_cuda_availability()
 
         run_preprocessing(
             Path(params.output_folder),
             config["preprocessing"],
-            Path(params.dataset_folder),
-            ses_idx=int(params.ses_idx),
+            Path(params.raw_session_folder),
             tiff_name=wildcards.tiff,
         )

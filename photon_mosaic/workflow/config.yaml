@@ -1,28 +1,17 @@
 # ============================================================================
 # Data Paths Configuration
 # ============================================================================
-# Base directories for raw and processed data
-base_path: /path/to/base/folder/
+# Project base directories
+project_path: /path/to/folder/
 
 # ============================================================================
 # Dataset Discovery Configuration
 # ============================================================================
 # This section controls how datasets are discovered and processed in the pipeline
 dataset_discovery:
-  # Data format specification
-  # Set to true if your data is already in NeuroBlueprint format (sub-XXX_key-value/ses-XXX_key-value/)
-  # If true: automatic metadata extraction from folder names
-  # If false: fallback to ses-XXX_id-old_folder_name pattern with optional transformations
-  neuroblueprint_format: false
-
   # Find tiffs. Different patterns will correspond to different sessions
   tiff_patterns: ["*.tif"]
 
-  # Configuration for custom format data (neuroblueprint_format: false)
-  # Applies the original behavior with ses-XXX_id-old_folder_name pattern
-
-  # Match all directories by default
-  pattern: "^.*$"
   # Exclude specific patterns from processing (dataset folder names)
   exclude_datasets:
     - ".*_test$"    # Exclude test datasets
