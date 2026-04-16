@@ -90,6 +90,26 @@ dff_targets = set_up_dff_targets(preproc_targets)
 
 logger.info(f"dFF calculation targets: {dff_targets}")
 
+dff_targets = [
+    str(
+        Path(processed_data_base)
+        / dataset_name
+        / discoverer.get_session_name(i, session_idx)
+        / "funcimg"
+        / "dff"
+        / "plane0"
+        / fname
+    )
+    for i, dataset_name in enumerate(discoverer.transformed_datasets)
+    for session_idx, tiff_list in discoverer.tiff_files[
+        discoverer.original_datasets[i]
+    ].items()
+    for fname in ["dFF.npy"]
+    if tiff_list  # Only create targets for sessions that have files
+]
+
+logger.info(f"dFF calculation targets: {dff_targets}")
+
 
 include: "preprocessing.smk"
 include: "suite2p.smk"
