@@ -197,73 +197,10 @@ def snake_test_env(tmp_path, base_config, data_factory):
 
 
 @pytest.fixture
-def custom_metadata_env(tmp_path, metadata_base_config, data_factory):
-    """Set up test environment for custom metadata format."""
-    # Use factory to create custom metadata dataset dynamically
-    raw_data = data_factory.create_custom_metadata_dataset(tmp_path)
-
-    processed_data = tmp_path / "derivatives"
-    processed_data.mkdir()
-
-    # Update config for custom format
-    config = metadata_base_config.copy()
-    config["raw_data_base"] = str(raw_data.resolve())
-    config["processed_data_base"] = str(processed_data.resolve())
-    config["dataset_discovery"]["neuroblueprint_format"] = False
-    config["dataset_discovery"]["pattern"] = ".*"
-
-    # Create config file
-    config_path = tmp_path / "config.yaml"
-    with open(config_path, "w") as f:
-        yaml.safe_dump(config, f)
-
-    return {
-        "workdir": tmp_path,
-        "configfile": config_path,
-        "raw_data": raw_data,
-        "processed_data": processed_data,
-    }
-
-
-@pytest.fixture
 def neuroblueprint_env(tmp_path, metadata_base_config, data_factory):
     """Set up test environment for NeuroBlueprint metadata format."""
     # Use factory to create NeuroBlueprint dataset dynamically
     raw_data = data_factory.create_neuroblueprint_dataset(tmp_path)
-
-    processed_data = tmp_path / "derivatives"
-    processed_data.mkdir()
-
-    # Update config for NeuroBlueprint format
-    config = metadata_base_config.copy()
-    config["raw_data_base"] = str(raw_data.resolve())
-    config["processed_data_base"] = str(processed_data.resolve())
-    config["dataset_discovery"]["neuroblueprint_format"] = True
-
-    # Create config file
-    config_path = tmp_path / "config.yaml"
-    with open(config_path, "w") as f:
-        yaml.safe_dump(config, f)
-
-    return {
-        "workdir": tmp_path,
-        "configfile": config_path,
-        "raw_data": raw_data,
-        "processed_data": processed_data,
-    }
-
-
-@pytest.fixture
-def neuroblueprint_noncontinuous_env(
-    tmp_path, metadata_base_config, data_factory
-):
-    """
-    Set up test environment for NeuroBlueprint format with non-continuous IDs.
-    """
-    # Use factory to create non-continuous ID dataset dynamically
-    raw_data = data_factory.create_noncontinuous_neuroblueprint_dataset(
-        tmp_path
-    )
 
     processed_data = tmp_path / "derivatives"
     processed_data.mkdir()
