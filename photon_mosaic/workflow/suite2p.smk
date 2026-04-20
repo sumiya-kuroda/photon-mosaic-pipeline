@@ -19,14 +19,17 @@ from photon_mosaic.paths_selection import _DERIVATIVES
 rule suite2p:
     input:
         tiffs=lambda wildcards: [
-            p
-            for p in preproc_targets
-            if (
-                Path(p).parts[Path(p).parts.index(_DERIVATIVES) + 1]
-                == wildcards.subject_name
-                and Path(p).parts[Path(p).parts.index(_DERIVATIVES) + 2]
-                == wildcards.session_name
+            cross_platform_path(
+                project_path
+                / _DERIVATIVES
+                / wildcards.subject_name
+                / wildcards.session_name
+                / "funcimg"
+                / (output_pattern + p.name)
             )
+            for p in all_selected_tiff_paths
+            if p.parts[p.parts.index(_RAWDATA) + 1] == wildcards.subject_name
+            and p.parts[p.parts.index(_RAWDATA) + 2] == wildcards.session_name
         ],
     output:
         F=cross_platform_path(
@@ -38,6 +41,16 @@ rule suite2p:
             / "suite2p"
             / "plane0"
             / "F.npy"
+        ),
+        Fneu=cross_platform_path(
+            project_path
+            / _DERIVATIVES
+            / "{subject_name}"
+            / "{session_name}"
+            / "funcimg"
+            / "suite2p"
+            / "plane0"
+            / "Fneu.npy"
         ),
         bin=cross_platform_path(
             project_path
