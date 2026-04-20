@@ -8,7 +8,9 @@ logger = logging.getLogger(__name__)
 
 _RAWDATA = "rawdata"
 _DERIVATIVES = "derivatives"
-_SUITE2P_FILES = ["F.npy", "data.bin"]
+_SUITE2P_FILES = ["F.npy", "Fneu.npy", "data.bin"]
+_NEUROPIL_FILES = ["Fc.npy"]
+_DFF_FILES = ["dFF.npy"]
 
 
 def find_raw_data_paths(
@@ -37,14 +39,9 @@ def find_raw_data_paths(
     -------
     list[Path]
         Sorted list of paths to all matching TIFF files.
-
-    Raises
-    ------
-    ValueError
-        If the project is not NeuroBlueprint compliant.
     """
     project_path = Path(project_path)
-    _ = ds.validate_project_from_path(
+    ds.validate_project_from_path(
         project_path,
         display_mode="error",
         strict_mode=True,
@@ -111,7 +108,7 @@ def adapt_paths_to_output_pattern(
     ValueError
         If a path does not contain a rawdata component.
     """
-    output_paths = []
+    output_paths: list[str] = []
     for file_path in all_selected_tiff_paths:
         parts = file_path.parts
         try:
@@ -149,10 +146,60 @@ def set_up_suite2p_targets(preproc_targets: list[str]) -> list[str]:
     list[str]
         Suite2p target paths (F.npy and data.bin for each input).
     """
-    suite2p_targets = []
+    suite2p_targets: list[str] = []
     for tiff_path in preproc_targets:
         suite2p_dir = Path(tiff_path).parent / "suite2p" / "plane0"
         for fname in _SUITE2P_FILES:
             suite2p_targets.append(str(suite2p_dir / fname))
 
     return suite2p_targets
+
+
+def set_up_neuropil_targets(preproc_targets: list[str]) -> list[str]:
+    """Generate neuropil correction target paths from preprocessed TIFF paths.
+
+    For each preprocessed TIFF, generates the expected neuropil output files
+    under a neuropil/plane0/ subdirectory.
+
+    Parameters
+    ----------
+    preproc_targets : list[str]
+        Preprocessed TIFF paths (output of adapt_paths_to_output_pattern).
+
+    Returns
+    -------
+    list[str]
+        Neuropil target paths (Fc.npy for each input).
+    """
+    neuropil_targets: list[str] = []
+    for tiff_path in preproc_targets:
+        neuropil_dir = Path(tiff_path).parent / "neuropil" / "plane0"
+        for fname in _NEUROPIL_FILES:
+            neuropil_targets.append(str(neuropil_dir / fname))
+
+    return neuropil_targets
+
+
+def set_up_dff_targets(preproc_targets: list[str]) -> list[str]:
+    """Generate dF/F target paths from preprocessed TIFF paths.
+
+    For each preprocessed TIFF, generates the expected dFF output files
+    under a dff/plane0/ subdirectory.
+
+    Parameters
+    ----------
+    preproc_targets : list[str]
+        Preprocessed TIFF paths (output of adapt_paths_to_output_pattern).
+
+    Returns
+    -------
+    list[str]
+        dFF target paths (dFF.npy for each input).
+    """
+    dff_targets: list[str] = []
+    for tiff_path in preproc_targets:
+        dff_dir = Path(tiff_path).parent / "dff" / "plane0"
+        for fname in _DFF_FILES:
+            dff_targets.append(str(dff_dir / fname))
+
+    return dff_targets

@@ -107,7 +107,7 @@ class DataFactory:
                     {"id": "001", "date": "20250221", "protocol": "test"},
                     {"id": "004", "date": "20250224", "protocol": "test"},
                     {"id": "008", "date": "20250228", "protocol": "test"},
-                    {"id": "009", "date": "20250229", "protocol": "test"},
+                    {"id": "009", "date": "20250228", "protocol": "test"},
                 ],
             ]
 
