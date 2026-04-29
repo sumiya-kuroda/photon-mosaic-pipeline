@@ -13,6 +13,7 @@ from pathlib import Path
 import yaml
 
 from photon_mosaic import get_snakefile_path
+from photon_mosaic.logging_config import ensure_dir
 
 
 def create_argument_parser():
@@ -327,15 +328,33 @@ def configure_slurm_execution(cmd, config):
     logger.info("SLURM execution enabled - configuring SLURM executor")
     cmd.extend(["--executor", "slurm"])
 
+    # Keep SLURM logs after successful job completion
+    cmd.append("--slurm-keep-successful-logs")
+
+    # Configure SLURM log directory to persist logs
+    project_path = Path(config["project_path"]).resolve()
+    slurm_logdir = (
+        project_path / "derivatives" / "photon-mosaic" / "logs" / "slurm"
+    )
+    ensure_dir(slurm_logdir, mode=0o755, parents=True, exist_ok=True)
+
+    # Use the dedicated --slurm-logdir flag to configure Snakemake's internal
+    # logs
+    cmd.extend(["--slurm-logdir", str(slurm_logdir)])
+
+    logger.info(f"SLURM logs will be saved to: {slurm_logdir}")
+
     # Add SLURM-specific arguments
-    slurm_config = config.get("slurm", {})
-    logger.info(f"SLURM configuration loaded: {slurm_config}")
+    slurm_config = config.get("slurm", {}).copy()
 
     # Override slurm_extra to properly set SLURM stdout/stderr paths
     # This ensures the actual sbatch output/error files go to the correct
     # location
     # %j = SLURM job ID, %x = job name (rule name)
-    slurm_config["slurm_extra"] = "--nodelist=gpu-350-05"
+    slurm_config["slurm_extra"] = (
+        f"--output={slurm_logdir}/%j_%x.out "
+        f"--error={slurm_logdir}/%j_%x.err"
+    )
 
     logger.info(f"Configuration loaded: {slurm_config}")
 
