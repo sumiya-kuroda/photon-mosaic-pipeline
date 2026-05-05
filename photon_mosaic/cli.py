@@ -7,19 +7,13 @@ import importlib.resources as pkg_resources
 import logging
 import os
 import subprocess
-import sys
 from datetime import datetime
 from pathlib import Path
 
 import yaml
 
 from photon_mosaic import get_snakefile_path
-from photon_mosaic.logging_config import (
-    ensure_dir,
-    log_section_header,
-    log_subsection,
-    setup_logging,
-)
+from photon_mosaic.logging_config import ensure_dir
 
 
 def create_argument_parser():
@@ -39,14 +33,9 @@ def create_argument_parser():
         help="Path to your config.yaml file.",
     )
     parser.add_argument(
-        "--raw_data_base",
+        "--project_path",
         default=None,
-        help="Override raw_data_base in config file",
-    )
-    parser.add_argument(
-        "--processed_data_base",
-        default=None,
-        help="Override processed_data_base in config file",
+        help="Override project_path in config file",
     )
     parser.add_argument(
         "--jobs", default="1", help="Number of parallel jobs to run"
@@ -73,11 +62,6 @@ def create_argument_parser():
         "--log-level",
         default="INFO",
         help="Log level",
-    )
-    parser.add_argument(
-        "--no-color",
-        action="store_true",
-        help="Disable colored log output",
     )
     parser.add_argument(
         "--verbose",
@@ -118,7 +102,7 @@ def ensure_default_config(reset_config=False):
 
     if not default_config_path.exists() or reset_config:
         logger.debug("Creating default config file")
-        ensure_dir(default_config_dir, mode=0o755, parents=True, exist_ok=True)
+        default_config_dir.mkdir(parents=True, exist_ok=True)
         source_config_path = pkg_resources.files("photon_mosaic").joinpath(
             "workflow", "config.yaml"
         )
@@ -165,77 +149,54 @@ def load_and_process_config(args):
     logger.debug(f"use_slurm: {config.get('use_slurm', 'NOT SET')}")
     logger.debug(f"slurm config: {config.get('slurm', 'NOT SET')}")
 
-    # Apply CLI overrides
-    if args.raw_data_base is not None:
-        logger.debug(f"Overriding raw_data_base to: {args.raw_data_base}")
-        config["raw_data_base"] = args.raw_data_base
+    # Apply CLI override
+    if args.project_path is not None:
+        logger.debug(f"Overriding project_path to: {args.project_path}")
+        config["project_path"] = args.project_path
     else:
         logger.debug(
-            f"Using raw_data_base from config file: {config['raw_data_base']}"
+            f"Using project_path from config file: {config['project_path']}"
         )
 
-    if args.processed_data_base is not None:
-        logger.debug(
-            f"Overriding processed_data_base to: {args.processed_data_base}"
-        )
-        config["processed_data_base"] = args.processed_data_base
-    else:
-        logger.debug(
-            "Using processed_data_base from config file: "
-            f"{config['processed_data_base']}"
-        )
-
-    # Process paths
-    raw_data_base = Path(config["raw_data_base"]).resolve()
-    processed_data_base = Path(config["processed_data_base"]).resolve()
-
-    # Append derivatives to the processed_data_base if
-    # it doesn't end with /derivatives
-    if processed_data_base.name != "derivatives":
-        processed_data_base = processed_data_base / "derivatives"
-    config["processed_data_base"] = str(processed_data_base)
+    # Resolve path
+    project_path = Path(config["project_path"]).resolve()
+    config["project_path"] = str(project_path)
 
     # Update default config file if it's the one being used
     if args.config is None:
-        update_default_config(
-            default_config_path, raw_data_base, processed_data_base
-        )
+        update_default_config(default_config_path, project_path)
 
     return config, config_path
 
 
-def update_default_config(config_path, raw_data_base, processed_data_base):
-    """Update the default config file with new base paths while
+def update_default_config(config_path, project_path):
+    """Update the default config file with new project path while
     preserving comments.
 
     Parameters
     ----------
     config_path : Path
         Path to the config file to update
-    raw_data_base : Path
-        Raw data base path
-    processed_data_base : Path
-        Processed data base path
+    project_path : Path
+        Project path
     """
     with open(config_path, "r") as f:
         config_lines = f.readlines()
     with open(config_path, "w") as f:
         for line in config_lines:
-            if line.startswith("processed_data_base:"):
-                f.write(f"processed_data_base: {processed_data_base}\n")
-            elif line.startswith("raw_data_base:"):
-                f.write(f"raw_data_base: {raw_data_base}\n")
+            if line.startswith("project_path:"):
+                f.write(f"project_path: {project_path}\n")
             else:
                 f.write(line)
 
 
-def setup_output_directories(processed_data_base):
+def setup_output_directories(project_path):
     """Create necessary output directories for the pipeline.
 
     Parameters
     ----------
-    processed_data_base : Path
-        Base path for processed data
+    project_path : Path
+        Project path
 
     Returns
     -------
@@ -244,7 +205,7 @@ def setup_output_directories(processed_data_base):
     """
     logger = logging.getLogger(__name__)
 
-    output_dir = processed_data_base / "photon-mosaic"
+    output_dir = project_path / "derivatives" / "photon-mosaic"
     logger.debug(f"Creating output directory: {output_dir}")
 
     logs_dir = output_dir / "logs"
@@ -252,9 +213,14 @@ def setup_output_directories(processed_data_base):
 
     # Create directories with explicit permissions (rwxr-xr-x)
     # This ensures SLURM jobs can access these directories
-    ensure_dir(output_dir, mode=0o755, parents=True, exist_ok=True)
-    ensure_dir(logs_dir, mode=0o755, parents=False, exist_ok=True)
-    ensure_dir(configs_dir, mode=0o755, parents=False, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    os.chmod(output_dir, 0o755)
+
+    logs_dir.mkdir(exist_ok=True)
+    os.chmod(logs_dir, 0o755)
+
+    configs_dir.mkdir(exist_ok=True)
+    os.chmod(configs_dir, 0o755)
 
     return output_dir, logs_dir, configs_dir
 
@@ -293,14 +259,8 @@ def save_timestamped_config(config, configs_dir):
     return timestamp, config_path
 
 
-def build_snakemake_command(
-    args: argparse.Namespace,
-    config_path: Path,
-    workflow_directory: Path,
-) -> list[str]:
+def build_snakemake_command(args, config_path):
     """Build the base snakemake command with common arguments.
-
-    Will auto-unlock any locked snakemake steps.
 
     Parameters
     ----------
@@ -308,8 +268,6 @@ def build_snakemake_command(
         Parsed command line arguments
     config_path : Path
         Path to the config file to use
-    workflow_directory : Path
-        Path to the workflow directory where .snakemake will be created
 
     Returns
     -------
@@ -325,8 +283,6 @@ def build_snakemake_command(
         "snakemake",
         "--snakefile",
         str(snakefile_path),
-        "--directory",
-        str(workflow_directory),
         "--jobs",
         str(args.jobs),
         "--configfile",
@@ -344,28 +300,8 @@ def build_snakemake_command(
     if not args.verbose:
         # Default to quiet mode unless --verbose is specified
         cmd.append("--quiet")
-    if is_the_workflow_locked(workflow_directory):
-        cmd.append("--unlock")
+
     return cmd
-
-
-def is_the_workflow_locked(workflow_directory: Path) -> bool:
-    """Check if the workflow is locked by looking for lock files.
-    Parameters
-    ----------
-    workflow_directory : Path
-        Path to the workflow directory
-    Returns
-    -------
-    bool
-        True if lock files are present, False otherwise
-    """
-
-    locks_dir = workflow_directory / ".snakemake" / "locks"
-    if not locks_dir.exists():
-        return False
-    lock_files = list(locks_dir.glob("*.lock"))
-    return len(lock_files) > 0
 
 
 def configure_slurm_execution(cmd, config):
@@ -389,7 +325,6 @@ def configure_slurm_execution(cmd, config):
         logger.info("SLURM execution disabled - running locally")
         return cmd
 
-    log_section_header(logger, "SLURM CONFIGURATION")
     logger.info("SLURM execution enabled - configuring SLURM executor")
     cmd.extend(["--executor", "slurm"])
 
@@ -397,8 +332,10 @@ def configure_slurm_execution(cmd, config):
     cmd.append("--slurm-keep-successful-logs")
 
     # Configure SLURM log directory to persist logs
-    processed_data_base = Path(config["processed_data_base"])
-    slurm_logdir = processed_data_base / "photon-mosaic" / "logs" / "slurm"
+    project_path = Path(config["project_path"]).resolve()
+    slurm_logdir = (
+        project_path / "derivatives" / "photon-mosaic" / "logs" / "slurm"
+    )
     ensure_dir(slurm_logdir, mode=0o755, parents=True, exist_ok=True)
 
     # Use the dedicated --slurm-logdir flag to configure Snakemake's internal
@@ -415,10 +352,10 @@ def configure_slurm_execution(cmd, config):
     # location
     # %j = SLURM job ID, %x = job name (rule name)
     slurm_config["slurm_extra"] = (
-        f"--output={slurm_logdir}/%j_%x.out --error={slurm_logdir}/%j_%x.err"
+        f"--output={slurm_logdir}/%j_%x.out "
+        f"--error={slurm_logdir}/%j_%x.err"
     )
 
-    log_subsection(logger, "SLURM Configuration")
     logger.info(f"Configuration loaded: {slurm_config}")
 
     # Resources that should NOT be passed via --default-resources
@@ -462,8 +399,9 @@ def configure_slurm_execution(cmd, config):
     return cmd
 
 
-def execute_pipeline(cmd, log_path):
-    """Execute the snakemake pipeline.
+def execute_pipeline_with_retry(cmd, log_path):
+    """Execute the snakemake pipeline with automatic
+    unlock and retry on lock errors.
 
     Parameters
     ----------
@@ -479,25 +417,54 @@ def execute_pipeline(cmd, log_path):
     """
     logger = logging.getLogger(__name__)
 
-    logger.debug(f"Saving logs to: {log_path}")
-    logger.info(f"Launching snakemake with command: {' '.join(cmd)}")
-
-    # Run initial command
     with open(log_path, "w") as logfile:
-        if "--unlock" in cmd:
-            logger.info("Unlocking workflow before execution")
-            result = subprocess.run(cmd, stdout=logfile, stderr=logfile)
-
-            if result.returncode != 0:
-                logger.error(
-                    "Failed to unlock workflow. Check log file for details."
-                )
-                return result.returncode
-
-            cmd = [arg for arg in cmd if arg != "--unlock"]
-            cmd.append("--rerun-incomplete")
-
+        logger.debug(f"Saving logs to: {log_path}")
+        logger.info(f"Launching snakemake with command: {' '.join(cmd)}")
         result = subprocess.run(cmd, stdout=logfile, stderr=logfile)
+
+        # If workflow is locked, automatically unlock and retry
+        if result.returncode != 0:
+            with open(log_path, "r") as log_read:
+                log_content = log_read.read()
+                if (
+                    "locked" in log_content.lower()
+                    or "lock" in log_content.lower()
+                ):
+                    logger.warning(
+                        "Workflow appears to be locked. "
+                        "Attempting automatic unlock and retry..."
+                    )
+
+                    unlock_cmd = cmd.copy()
+                    unlock_cmd.append("--unlock")
+
+                    with open(log_path, "a") as logfile_append:
+                        logfile_append.write("\n--- Auto-unlock attempt ---\n")
+                        unlock_result = subprocess.run(
+                            unlock_cmd,
+                            stdout=logfile_append,
+                            stderr=logfile_append,
+                        )
+
+                    if unlock_result.returncode == 0:
+                        logger.info(
+                            "Automatic unlock successful. "
+                            "Retrying pipeline execution..."
+                        )
+                        with open(log_path, "a") as logfile_append:
+                            logfile_append.write(
+                                "\n--- Retry after unlock ---\n"
+                            )
+                            result = subprocess.run(
+                                cmd,
+                                stdout=logfile_append,
+                                stderr=logfile_append,
+                            )
+                    else:
+                        logger.error(
+                            "Automatic unlock failed. "
+                            "Please check the log file for details."
+                        )
 
     return result.returncode
 
@@ -517,11 +484,8 @@ def main():
     --config : str, optional
         Path to your config.yaml file. If not provided, uses
         ~/.photon_mosaic/config.yaml.
-    --raw_data_base : str, optional
-        Override raw_data_base in config file (path to raw imaging data).
-    --processed_data_base : str, optional
-        Override processed_data_base in config file (path for processed
-        outputs).
+    --project_path : str, optional
+        Override project_path in config file (root of NeuroBlueprint project).
     --jobs : str, default="1"
         Number of parallel jobs to run.
     --dry-run : bool, optional
@@ -530,13 +494,10 @@ def main():
         Force re-run of a specific rule (e.g., 'suite2p').
     --rerun-incomplete : bool, optional
         Rerun any incomplete jobs.
-
     --latency-wait : int, default=10
         Time to wait before checking if output files are ready.
     --log-level : str, default="INFO"
         Log level.
-    --no-color : flag, optional
-        Disable colored log output.
     --verbose, -v : flag, optional
         Enable verbose output (default is quiet mode).
     --reset-config : flag, optional
@@ -549,97 +510,48 @@ def main():
     The pipeline will:
     1. Create a timestamped config file in derivatives/photon-mosaic/configs/
     2. Save execution logs in derivatives/photon-mosaic/logs/
-    3. Process all TIFF files found in the raw data directory
+    3. Process all TIFF files found under rawdata/sub-*/ses-*/funcimg/
     4. Generate standardized outputs following NeuroBlueprint specification
     """
-    # Enable unbuffered output for immediate log visibility
-    os.environ["PYTHONUNBUFFERED"] = "1"
-
-    # Also configure stdout/stderr for line buffering
-    sys.stdout.reconfigure(line_buffering=True)
-    sys.stderr.reconfigure(line_buffering=True)
-
     # Parse command line arguments
     parser = create_argument_parser()
     args = parser.parse_args()
 
-    # Load configuration early to get paths for log setup
+    # Set up logging
+    logging.basicConfig(level=args.log_level)
+    logger = logging.getLogger(__name__)
+    logger.debug("Starting photon-mosaic CLI")
+
+    # Load and process configuration
     config, _ = load_and_process_config(args)
 
     # Set up output directories
-    processed_data_base = Path(config["processed_data_base"])
-    output_dir, logs_dir, configs_dir = setup_output_directories(
-        processed_data_base
-    )
-
-    # Create timestamped log file
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_file = logs_dir / f"photon_mosaic_{timestamp}.log"
-
-    # Set up improved logging system
-    logger = setup_logging(
-        log_level=args.log_level,
-        log_file=log_file,
-        use_colors=not args.no_color,
-    )
-
-    # Log pipeline startup with clear visual separation
-    log_section_header(logger, "PHOTON-MOSAIC PIPELINE")
-    logger.info(f"Log file: {log_file}")
-    logger.info(
-        f"Python unbuffered: {os.environ.get('PYTHONUNBUFFERED', 'not set')}"
-    )
-    logger.info(f"Timestamp: {timestamp}")
-
-    # Log configuration details
-    log_section_header(logger, "CONFIGURATION")
-    logger.info(f"Raw data base: {config['raw_data_base']}")
-    logger.info(f"Processed data base: {config['processed_data_base']}")
-    logger.info(f"Output directory: {output_dir}")
-    logger.info(f"SLURM enabled: {config.get('use_slurm', False)}")
-    if args.dry_run:
-        logger.info("DRY RUN MODE - No files will be modified")
+    project_path = Path(config["project_path"])
+    output_dir, logs_dir, configs_dir = setup_output_directories(project_path)
 
     # Save timestamped config for reproducibility
-    log_section_header(logger, "SAVING CONFIGURATION")
     timestamp, config_path = save_timestamped_config(config, configs_dir)
-    logger.info(f"Config saved to: {config_path}")
 
     # Build snakemake command
-    log_section_header(logger, "BUILDING SNAKEMAKE COMMAND")
-    cmd = build_snakemake_command(args, config_path, output_dir)
-    logger.info(f"Base command: {' '.join(cmd[:5])}...")
-    logger.info(f"Workflow directory: {output_dir}")
+    cmd = build_snakemake_command(args, config_path)
 
     # Configure SLURM execution if enabled
     cmd = configure_slurm_execution(cmd, config)
 
     # Add extra arguments if provided
     if args.extra:
-        log_subsection(logger, "Additional Arguments")
-        logger.info(f"Extra arguments: {' '.join(args.extra)}")
         cmd.extend(args.extra)
 
     # Execute pipeline with automatic retry on lock errors
-    log_section_header(logger, "EXECUTING SNAKEMAKE PIPELINE")
     log_filename = f"snakemake_{timestamp}.log"
     log_path = logs_dir / log_filename
-    logger.info(f"Snakemake logs will be saved to: {log_path}")
-    logger.info(f"Full command: {' '.join(cmd)}")
-    logger.info("")
-    logger.info("Starting pipeline execution...")
-
-    return_code = execute_pipeline(cmd, log_path)
+    return_code = execute_pipeline_with_retry(cmd, log_path)
 
     # Report final status
-    log_section_header(logger, "PIPELINE EXECUTION COMPLETE")
     if return_code == 0:
-        logger.info("✓ Snakemake pipeline completed successfully")
-        logger.info(f"  Logs: {log_path}")
+        logging.info("Snakemake pipeline completed successfully.")
     else:
-        logger.error(f"✗ Pipeline failed with exit code {return_code}")
-        logger.error(f"  Check log file: {log_path}")
-
-    logger.info("")
-
-    return return_code
+        logging.info(
+            f"Snakemake pipeline failed with exit code {return_code}. "
+            f"Check the log file at {log_path} for details."
+        )

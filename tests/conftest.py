@@ -69,13 +69,8 @@ def base_config():
     ) as f:
         config = yaml.safe_load(f)
 
-    config["raw_data_base"] = "raw_data"
-    config["processed_data_base"] = "derivatives"
-    #  match different file naming patterns to different sessions
-    config["dataset_discovery"]["tiff_patterns"] = [
-        "type_1*.tif",
-        "type_2*.tif",
-    ]
+    config["project_path"] = "."
+    config["dataset_discovery"]["tiff_patterns"] = ["*.tif"]
 
     return config
 
@@ -89,7 +84,6 @@ def metadata_base_config():
     ) as f:
         config = yaml.safe_load(f)
 
-    # Set default values for metadata testing
     config["dataset_discovery"]["tiff_patterns"] = ["*.tif"]
     return config
 
@@ -114,20 +108,22 @@ def cli_args(snake_test_env):
 
 def create_map_of_tiffs(raw_data_path: Path) -> dict:
     """
-    Create a map of tiffs for a given raw data directory.
+    Create a map of tiffs for a given rawdata directory.
 
     Args:
-        raw_data_path: Path to raw data directory
+        raw_data_path: Path to rawdata directory
 
     Returns:
-        Dictionary mapping dataset names to list of TIFF filenames
+        Dictionary mapping subject/session paths to list of TIFF filenames
     """
     map_of_tiffs = {}
-    for dataset in raw_data_path.glob("*"):
-        if dataset.is_dir():
-            # Get just the filenames, not the full paths
-            tiff_files = [f.name for f in dataset.rglob("*.tif")]
-            map_of_tiffs[dataset.name] = tiff_files
+    for subject in raw_data_path.glob("sub-*"):
+        if subject.is_dir():
+            for session in subject.glob("ses-*"):
+                if session.is_dir():
+                    tiff_files = [f.name for f in session.rglob("*.tif")]
+                    key = f"{subject.name}/{session.name}"
+                    map_of_tiffs[key] = tiff_files
     return map_of_tiffs
 
 
@@ -160,8 +156,8 @@ def snake_test_env(tmp_path, base_config, data_factory):
     print("\n=== Setting up test environment ===")
     print(f"Temporary directory: {tmp_path}")
 
-    # Use factory to create basic dataset structure dynamically
-    raw_data = data_factory.create_basic_dataset(tmp_path)
+    # Use factory to create NeuroBlueprint dataset structure dynamically
+    raw_data = data_factory.create_neuroblueprint_dataset(tmp_path)
     print(f"Raw data directory: {raw_data}")
     print(f"Raw data contents after creation: {list(raw_data.glob('**/*'))}")
 
@@ -171,12 +167,10 @@ def snake_test_env(tmp_path, base_config, data_factory):
 
     # Update paths in config
     config = base_config.copy()
-    config["raw_data_base"] = str(raw_data.resolve())
-    config["processed_data_base"] = str(processed_data.resolve())
+    config["project_path"] = str(tmp_path.resolve())
 
     print("\n=== Configuration ===")
-    print(f"Raw data base: {config['raw_data_base']}")
-    print(f"Processed data base: {config['processed_data_base']}")
+    print(f"Project path: {config['project_path']}")
 
     # Create config file
     config_path = tmp_path / "config.yaml"
@@ -197,82 +191,15 @@ def snake_test_env(tmp_path, base_config, data_factory):
 
 
 @pytest.fixture
-def custom_metadata_env(tmp_path, metadata_base_config, data_factory):
-    """Set up test environment for custom metadata format."""
-    # Use factory to create custom metadata dataset dynamically
-    raw_data = data_factory.create_custom_metadata_dataset(tmp_path)
-
-    processed_data = tmp_path / "derivatives"
-    processed_data.mkdir()
-
-    # Update config for custom format
-    config = metadata_base_config.copy()
-    config["raw_data_base"] = str(raw_data.resolve())
-    config["processed_data_base"] = str(processed_data.resolve())
-    config["dataset_discovery"]["neuroblueprint_format"] = False
-    config["dataset_discovery"]["pattern"] = ".*"
-
-    # Create config file
-    config_path = tmp_path / "config.yaml"
-    with open(config_path, "w") as f:
-        yaml.safe_dump(config, f)
-
-    return {
-        "workdir": tmp_path,
-        "configfile": config_path,
-        "raw_data": raw_data,
-        "processed_data": processed_data,
-    }
-
-
-@pytest.fixture
 def neuroblueprint_env(tmp_path, metadata_base_config, data_factory):
     """Set up test environment for NeuroBlueprint metadata format."""
-    # Use factory to create NeuroBlueprint dataset dynamically
     raw_data = data_factory.create_neuroblueprint_dataset(tmp_path)
 
     processed_data = tmp_path / "derivatives"
     processed_data.mkdir()
 
-    # Update config for NeuroBlueprint format
     config = metadata_base_config.copy()
-    config["raw_data_base"] = str(raw_data.resolve())
-    config["processed_data_base"] = str(processed_data.resolve())
-    config["dataset_discovery"]["neuroblueprint_format"] = True
-
-    # Create config file
-    config_path = tmp_path / "config.yaml"
-    with open(config_path, "w") as f:
-        yaml.safe_dump(config, f)
-
-    return {
-        "workdir": tmp_path,
-        "configfile": config_path,
-        "raw_data": raw_data,
-        "processed_data": processed_data,
-    }
-
-
-@pytest.fixture
-def neuroblueprint_noncontinuous_env(
-    tmp_path, metadata_base_config, data_factory
-):
-    """
-    Set up test environment for NeuroBlueprint format with non-continuous IDs.
-    """
-    # Use factory to create non-continuous ID dataset dynamically
-    raw_data = data_factory.create_noncontinuous_neuroblueprint_dataset(
-        tmp_path
-    )
-
-    processed_data = tmp_path / "derivatives"
-    processed_data.mkdir()
-
-    # Update config for NeuroBlueprint format
-    config = metadata_base_config.copy()
-    config["raw_data_base"] = str(raw_data.resolve())
-    config["processed_data_base"] = str(processed_data.resolve())
-    config["dataset_discovery"]["neuroblueprint_format"] = True
+    config["project_path"] = str(tmp_path.resolve())
 
     # Create config file
     config_path = tmp_path / "config.yaml"
@@ -292,15 +219,7 @@ def log_test_fs(request):
     """
     After each test, write a snapshot of relevant test directories to
     `tests/logs/<testname>_<timestamp>.log`.
-
-    The fixture inspects other fixtures used by the test (via
-    `request.node.funcargs`) to discover Path-like objects such as
-    `workdir`, `raw_data` or `processed_data`. If none are found it
-    falls back to the static `tests/data` directory. This helper will
-    never raise; failures to write the log are printed so tests are not
-    affected.
     """
-    # run test
     yield
 
     try:
@@ -312,18 +231,16 @@ def log_test_fs(request):
 
         log_path = logs_dir / f"{test_name}_{timestamp}.log"
 
-        # Collect candidate roots from fixture funcargs
         roots = []
         funcargs = getattr(request.node, "funcargs", {}) or {}
 
         def add_path_like(value):
-            # Handle dicts returned by some fixtures
             if isinstance(value, dict):
                 for key in (
                     "workdir",
                     "raw_data",
                     "processed_data",
-                    "raw_data_base",
+                    "base_path",
                 ):
                     v = value.get(key)
                     if v:
@@ -335,23 +252,17 @@ def log_test_fs(request):
                 if p.exists():
                     roots.append(p)
 
-        # Inspect all funcargs the test received
         for v in funcargs.values():
             add_path_like(v)
 
-        # Also include tmp_path if present
         if "tmp_path" in funcargs:
             add_path_like(funcargs.get("tmp_path"))
 
-        # Fallback to tests/data
         if not roots:
             fallback = Path(__file__).parent / "data"
             if fallback.exists():
                 roots.append(fallback)
 
-        # Normalize and deduplicate roots so we don't write the same
-        # directory multiple times (the same path can be referenced from
-        # multiple fixtures, e.g. `workdir`, `tmp_path`, or nested values).
         seen = set()
         unique_roots = []
         for p in roots:
@@ -359,7 +270,6 @@ def log_test_fs(request):
                 rp = p.resolve()
             except Exception:
                 rp = p
-            # If a file was added (e.g. a config file), prefer its parent dir
             if rp.is_file():
                 rp = rp.parent
             if rp not in seen:
@@ -368,37 +278,30 @@ def log_test_fs(request):
 
         parent_candidates = []
         for r in unique_roots:
-            if any((r / t).exists() for t in ("derivatives", "raw_data")):
+            if any((r / t).exists() for t in ("derivatives", "rawdata")):
                 parent_candidates.append(r)
 
         if parent_candidates:
-            # Prefer a parent that has both children when available
             best = next(
                 (
                     r
                     for r in parent_candidates
                     if all(
-                        (r / t).exists() for t in ("derivatives", "raw_data")
+                        (r / t).exists() for t in ("derivatives", "rawdata")
                     )
                 ),
                 None,
             )
             roots = [best or parent_candidates[0]]
         else:
-            # Keep explicit child dirs if present (e.g. paths that are
-            # literally `.../raw_data` or `.../derivatives`).
             children = [
-                r
-                for r in unique_roots
-                if r.name in ("raw_data", "derivatives")
+                r for r in unique_roots if r.name in ("rawdata", "derivatives")
             ]
             if children:
-                # preserve order but remove duplicates
                 roots = list(dict.fromkeys(children))
             else:
                 roots = unique_roots
 
-        # Write the log file as a simple listing of each root's tree
         with open(log_path, "w", encoding="utf-8") as lf:
             lf.write(f"Test: {request.node.nodeid}\n")
             lf.write(f"Timestamp: {timestamp}\n\n")
@@ -406,21 +309,16 @@ def log_test_fs(request):
             for root in roots:
                 lf.write(f"Root: {root}\n")
 
-                # Prefer to only show the two top-level directories of interest
-                # if they exist: derivatives/ and raw_data/
-                for top in ("derivatives", "raw_data"):
+                for top in ("derivatives", "rawdata"):
                     top_path = root / top
                     if top_path.exists():
                         lf.write(f"{top}/\n")
-                        # write pretty tree lines (indented)
                         for line in tree_lines(top_path):
                             lf.write(f"{line}\n")
                         lf.write("\n")
 
-                # If neither was present,
-                # fall back to the previous full listing
                 if not any(
-                    (root / t).exists() for t in ("derivatives", "raw_data")
+                    (root / t).exists() for t in ("derivatives", "rawdata")
                 ):
                     for p in sorted(root.rglob("*")):
                         try:
@@ -433,10 +331,7 @@ def log_test_fs(request):
                             lf.write(f"{rel}\n")
                     lf.write("\n")
 
-    except (
-        Exception
-    ) as exc:  # pragma: no cover - avoid breaking tests on logging errors
-        # Don't let logging break tests
+    except Exception as exc:
         print(
             f"Error writing test filesystem log for {request.node.name}: {exc}"
         )
