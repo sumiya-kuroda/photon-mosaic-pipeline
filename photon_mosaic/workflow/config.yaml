@@ -161,12 +161,15 @@ suite2p_ops:
   neucoeff: 0.7  # Neuropil coefficient
 
 # ============================================================================
-# Neuropil Correction + dF/F Calculation Configuration
+# Neuropil Correction Configuration
 # ============================================================================
-# Shared by both the neuropil rule (uses neucoeff) and the dff rule
-# (uses gmm_ncomponents).
-dff_ops:
+neuropil_ops:
   neucoeff: 0.7        # Neuropil coefficient for Fc = F - neucoeff * (Fneu - median(Fneu))
+
+# ============================================================================
+# dF/F Calculation Configuration
+# ============================================================================
+dff_ops:
   gmm_ncomponents: 2   # Number of GMM components for baseline F0 estimation
 
 # ============================================================================

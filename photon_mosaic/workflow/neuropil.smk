@@ -70,5 +70,5 @@ rule neuropil:
             str(input_path_F),
             str(input_path_Fneu),
             str(output_path),
-            config["dff_ops"],
+            config["neuropil_ops"],
         )

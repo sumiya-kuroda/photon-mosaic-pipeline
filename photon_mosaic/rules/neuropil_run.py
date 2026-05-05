@@ -2,9 +2,12 @@
 Snakemake rule for neuropil correction.
 """
 
+import logging
 from pathlib import Path
 
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 def calculate_neuropil_correction(
@@ -32,7 +35,7 @@ def calculate_neuropil_correction(
     save_folder = Path(output_path).parent
     save_folder.mkdir(parents=True, exist_ok=True)
 
-    print("Applying neuropil correction...")
+    logger.info("Applying neuropil correction...")
 
     F = np.load(input_path_F)
     Fneu = np.load(input_path_Fneu)
@@ -42,4 +45,4 @@ def calculate_neuropil_correction(
     )
 
     np.save(output_path, Fc)
-    print(f"Saved neuropil-corrected traces to {output_path}")
+    logger.info(f"Saved neuropil-corrected traces to {output_path}")

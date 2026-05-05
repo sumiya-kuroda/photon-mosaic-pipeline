@@ -2,10 +2,13 @@
 Snakemake rule for calculating dF/F.
 """
 
+import logging
 from pathlib import Path
 
 import numpy as np
 from sklearn import mixture
+
+logger = logging.getLogger(__name__)
 
 
 def calculate_dFF(
@@ -31,17 +34,14 @@ def calculate_dFF(
     save_folder = Path(output_path).parent
     save_folder.mkdir(parents=True, exist_ok=True)
 
-    print("Calculating dF/F...")
+    logger.info("Calculating dF/F...")
 
     Fc = np.load(input_path_Fc)
+    n_components = user_ops_dict["gmm_ncomponents"]
 
-    print(
-        "n components for dFF calculation: {}".format(
-            user_ops_dict["gmm_ncomponents"]
-        )
-    )
+    logger.info(f"n components for dFF calculation: {n_components}")
 
-    dff, f0 = dFF(Fc, n_components=user_ops_dict["gmm_ncomponents"])
+    dff, f0 = dFF(Fc, n_components=n_components)
 
     np.save(save_folder / "dFF.npy", dff)
     np.save(save_folder / "F0.npy", f0)
