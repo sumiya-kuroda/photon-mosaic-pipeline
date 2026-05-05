@@ -41,9 +41,9 @@ This section contains automatically generated documentation for the
 
 """
 
-    # Add module entries for the toctree
+    # Add module entries for the toctree (autosummary writes stubs into api/)
     api_index_content += (
-        "\n".join(f"   {module}" for module in module_entries) + "\n\n"
+        "\n".join(f"   api/{module}" for module in module_entries) + "\n\n"
     )
 
     # Add the autosummary directive
