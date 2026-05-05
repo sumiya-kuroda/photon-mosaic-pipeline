@@ -130,6 +130,9 @@ suite2p_ops:
   high_pass: 100  # Running mean window
   spatial_hp_detect: 25  # Window for spatial high-pass
   denoise: false  # Denoise before detection
+  # Recommended: keep > 0 (Cellpose path). Setting 0 routes through
+  # suite2p's sparsedetect, which currently fails on numpy>=2 inside
+  # suite2p-NIU 0.1.1 (sparsedetect.py:337).
   anatomical_only: 4  # Use Cellpose if > 0
   diameter: 0  # Cellpose diameter (0 for auto)
   cellprob_threshold: 0.0  # Cellpose detection threshold
