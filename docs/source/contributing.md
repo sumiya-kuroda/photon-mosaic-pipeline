@@ -12,7 +12,7 @@ and [opening a pull request](#pull-requests).
 ## Creating a development environment
 
 To install ``photon-mosaic`` for development, first the
-[GitHub repository](https://github.com/neuroinformatics-unit/photon-mosaic)
+[GitHub repository](https://github.com/photon-mosaic/photon-mosaic-pipeline)
 should be cloned. Then, you can change-directory
 to the cloned repository and run pip install with the developer tag:
 
@@ -58,7 +58,7 @@ Use the `cross_platform_path` function to construct paths that are compatible wi
 
 Example:
 ```python
-from photon_mosaic.pathing import cross_platform_path
+from photon_mosaic.snakemake_utils import cross_platform_path
 
 rule example:
     input:
@@ -167,7 +167,7 @@ folder and open the `index.html` file.
 ### Editing the documentation
 
 The documentation is hosted using [GitHub Pages](https://pages.github.com/), and the source can be found at
-[GitHub](https://github.com/neuroinformatics-unit/photon-mosaic/tree/main/docs).
+[GitHub](https://github.com/photon-mosaic/photon-mosaic-pipeline/tree/main/docs).
 Most content is found under `docs/source`, where the structure mirrors the rendered website.
 
 To edit a page, please:

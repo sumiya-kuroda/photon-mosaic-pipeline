@@ -24,11 +24,13 @@ The goal of `photon-mosaic` is to provide a modular, extensible, and user-friend
 - Preprocessing: [derotation](https://github.com/neuroinformatics-unit/derotation) and contrast enhancement (see `photon_mosaic/preprocessing`).
 - Registration & source extraction using [Suite2p](https://github.com/MouseLand/suite2p).
 - Cell detection / anatomical ROI extraction using [Cellpose (v3 or v4, including Cellpose-SAM)](https://github.com/MouseLand/cellpose).
+- Linear neuropil correction (`Fc = F - neucoeff * (Fneu - median(Fneu))`).
+- dF/F calculation with GMM-based baseline F0 estimation.
 
 ### Planned additions
 - Registration using [NoRMCorre](https://github.com/flatironinstitute/NoRMCorre) for non-rigid motion correction.
 - ROI matching using [ROICat](https://github.com/RichieHakim/ROICaT) for inter-session / inter-plane ROI matching.
-- Neuropil subtraction / decontamination: methods from the [AllenSDK](https://allensdk.readthedocs.io/en/latest/allensdk.brain_observatory.r_neuropil.html) and [AST-model](https://github.com/znamlab/2p-preprocess).
+- Advanced neuropil decontamination: methods from the [AllenSDK](https://allensdk.readthedocs.io/en/latest/allensdk.brain_observatory.r_neuropil.html) and [AST-model](https://github.com/znamlab/2p-preprocess).
 - Spike deconvolution: [OASIS](https://github.com/j-friedrich/OASIS) and [CASCADE](https://github.com/HelmchenLabSoftware/Cascade).
 
 See [issues on GitHub](https://github.com/neuroinformatics-unit/photon-mosaic/issues) and the [project board](https://github.com/orgs/neuroinformatics-unit/projects/17) for more details and participate in planning. Please refer to our [guidelines](https://photon-mosaic.neuroinformatics.dev/contributing.html) to understand how to contribute.

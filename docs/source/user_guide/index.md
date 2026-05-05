@@ -42,4 +42,11 @@ Learn about the preprocessing steps available in photon-mosaic.
 How to organise raw data in NeuroBlueprint format and filter which TIFFs the pipeline processes.
 :::
 
+:::{grid-item-card} 📊 Postprocessing
+:link: postprocessing
+:link-type: doc
+
+Neuropil correction and dF/F calculation applied after Suite2p.
+:::
+
 ::::

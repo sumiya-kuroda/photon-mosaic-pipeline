@@ -7,7 +7,7 @@ There are three available preprocessing steps:
 - `contrast`: Contrast enhancement using percentile-based contrast stretching.
 - `derotation`: Image derotation using the derotation package.
 
-The are mutually exclusive. To trigger one or the other you need to edit the configuration file.
+These are mutually exclusive. To trigger one or the other you need to edit the configuration file.
 
 ## Available Preprocessing Steps
 

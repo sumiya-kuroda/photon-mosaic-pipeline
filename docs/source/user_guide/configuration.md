@@ -65,6 +65,14 @@ suite2p_ops:
   roidetect: true
   anatomical_only: 0
 
+# Neuropil correction (post-Suite2p)
+neuropil_ops:
+  neucoeff: 0.7
+
+# dF/F calculation (post-neuropil)
+dff_ops:
+  gmm_ncomponents: 2
+
 # SLURM settings
 use_slurm: false
 slurm:
@@ -74,7 +82,7 @@ slurm:
   nodes: 1
 ```
 
-For the complete configuration file with all available parameters and detailed comments, see [photon_mosaic/workflow/config.yaml](https://github.com/neuroinformatics-unit/photon-mosaic/blob/main/photon_mosaic/workflow/config.yaml) or the YAML file in `~/.photon_mosaic/config.yaml` generated on first run.
+For the complete configuration file with all available parameters and detailed comments, see [photon_mosaic/workflow/config.yaml](https://github.com/photon-mosaic/photon-mosaic-pipeline/blob/main/photon_mosaic/workflow/config.yaml) or the YAML file in `~/.photon_mosaic/config.yaml` generated on first run.
 
 ## Key Configuration Notes
 
@@ -83,6 +91,9 @@ See the [data input documentation](data_input.md) for the required NeuroBlueprin
 
 ### Preprocessing
 See the [preprocessing documentation](preprocessing.md) for step-specific configuration
+
+### Postprocessing
+See the [postprocessing documentation](postprocessing.md) for the `neuropil_ops` and `dff_ops` keys controlling neuropil correction and dF/F calculation.
 
 ### Suite2p Parameters
 The configuration includes all standard Suite2p parameters plus custom additions:
