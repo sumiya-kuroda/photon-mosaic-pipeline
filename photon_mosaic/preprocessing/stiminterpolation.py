@@ -71,24 +71,28 @@ def run(
             )
 
     # Run stiminterp
-    logging.info(f"Running stiminterp pipeline for {str(input_file)}")
+    logger.info(f"Running stiminterp pipeline for {str(input_file)}")
     if path_to_stim_h5 == "":
         path_to_stim_h5 = None
     run_stiminterp(
         input_tif=str(input_file),
         input_h5=path_to_stim_h5,
         output_tif=str(output_path),
+        **kwargs,
     )
 
-    # Save metadata as JSON
-    metadata = parse_si_metadata(input_file)
-    if metadata is not None:
-        json_path = output_path.with_name(output_path.stem + "_metadata.json")
-        with open(json_path, "w") as f:
-            json.dump(metadata, f, indent=4)
-        logger.info(f"Saved metadata to {json_path}")
-    else:
-        logger.warning(f"No ScanImage metadata found in {str(input_file)}")
+    # Save metadata as JSON if requested
+    if save_metadata:
+        metadata = parse_si_metadata(input_file)
+        if metadata is not None:
+            json_path = output_path.with_name(
+                output_path.stem + "_metadata.json"
+            )
+            with open(json_path, "w") as f:
+                json.dump(metadata, f, indent=4)
+            logger.info(f"Saved metadata to {json_path}")
+        else:
+            logger.warning(f"No ScanImage metadata found in {str(input_file)}")
 
 
 def parse_si_metadata(tiff_path):

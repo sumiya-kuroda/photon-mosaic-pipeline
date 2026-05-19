@@ -39,9 +39,9 @@ preprocessing:
     # Photostimulation-artefact removal by interpolation
     # - name: stiminterpolation
     #   kwargs:
-    #     # File pattern matching for input files (HDF5)
-    #     path_to_stim_h5: "/Users/skuroda/local_data/stimlus_ttl.h5"
-    #     save_metadata: true # Whether to save metadata as separate json files
+    #     # Path to the stimulation TTL HDF5 file
+    #     path_to_stim_h5: "path/to/stimulus_ttl.h5"
+    #     save_metadata: true # Whether to save ScanImage metadata as a JSON file
 
     # Derotation
     # - name: derotation
