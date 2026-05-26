@@ -20,7 +20,7 @@ project_path/
                 └── ...
 ```
 
-Outputs are written next to `rawdata/` under `derivatives/`, mirroring the `sub-*/ses-*/funcimg/` structure.
+Outputs are written by `photon-mosaic` next to `rawdata/` under `derivatives/`, mirroring the `sub-*/ses-*/funcimg/` structure.
 
 The project is validated on every run via [`datashuttle.validate_project_from_path`](https://datashuttle.neuroinformatics.dev/) in strict mode. If the layout deviates from NeuroBlueprint, the run aborts with a clear error.
 
