@@ -1,11 +1,7 @@
 (user_guide/data_input)=
 # Data Input
 
-`photon-mosaic` expects raw data to follow the [NeuroBlueprint](https://neuroblueprint.neuroinformatics.dev/) specification. The pipeline does **not** rename or re-index your data: subject and session identifiers are read directly from the directory tree.
-
-## Required layout
-
-Point `project_path` at a directory that contains a `rawdata/` folder organised like this:
+`photon-mosaic` expects raw data to follow the [NeuroBlueprint](https://neuroblueprint.neuroinformatics.dev/) specification. This means your `project_path` will contain a `rawdata/` folder organised like this. `photon-mosaic` will only look at `funcimg` subfolders in your project.
 
 ```
 project_path/
