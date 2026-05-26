@@ -26,7 +26,7 @@ The project is validated on every run via [`datashuttle.validate_project_from_pa
 
 ## Converting an existing dataset
 
-If your raw data is not yet in NeuroBlueprint format, the recommended path is to organise it once with [datashuttle](https://datashuttle.neuroinformatics.dev/), then point `photon-mosaic` at the resulting project. Naming and session enumeration belong upstream of the pipeline, not inside it.
+If your raw data does not yet follow the NeuroBlueprint specification, we recommend you organise it first with [datashuttle](https://datashuttle.neuroinformatics.dev/), then point `photon-mosaic` at the resulting project folder.
 
 ## Filtering which files are processed
 
