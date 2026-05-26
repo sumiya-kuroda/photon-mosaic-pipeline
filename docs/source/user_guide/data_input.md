@@ -52,7 +52,9 @@ dataset_discovery:
 
 Notes:
 
-- `tiff_patterns` is a list of globs; multiple patterns are unioned. The pipeline does not infer session numbering from the filename — sessions come from `ses-*` folder names.
+- `tiff_patterns` is a list of *glob* patterns. A glob is a filename pattern where `*` matches any sequence of characters, so `*.tif` matches every file ending in `.tif`, and `recording_*.tif` matches only files starting with `recording_`.
+- When you list more than one pattern, the results are *unioned*: a file is included if it matches **any** pattern in the list. For example, `["*.tif", "*.tiff"]` picks up files with either extension. Most projects need only `"*.tif"`.
+- The pipeline does not infer session numbering from the filename — sessions come from `ses-*` folder names.
 - `exclude_datasets` and `exclude_sessions` use full-match regex (`re.fullmatch`), not glob.
 - Both lists default to empty; nothing is excluded unless you say so.
 
