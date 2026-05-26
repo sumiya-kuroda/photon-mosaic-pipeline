@@ -76,10 +76,7 @@ slurm:
 
 For the complete configuration file with all available parameters and detailed comments, see [photon_mosaic/workflow/config.yaml](https://github.com/neuroinformatics-unit/photon-mosaic/blob/main/photon_mosaic/workflow/config.yaml) or the YAML file in `~/.photon_mosaic/config.yaml` generated on first run.
 
-## Key Configuration Notes
-
-### Data input
-See the [data input documentation](data_input.md) for the required NeuroBlueprint layout and the `dataset_discovery` filter keys (`tiff_patterns`, `exclude_datasets`, `exclude_sessions`).
+## Further Configuration Notes
 
 ### Preprocessing
 See the [preprocessing documentation](preprocessing.md) for step-specific configuration
