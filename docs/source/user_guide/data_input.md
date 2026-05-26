@@ -47,7 +47,7 @@ dataset_discovery:
   # Regex patterns matched against session folder names. Any session
   # whose folder fully matches one of these patterns is skipped.
   exclude_sessions:
-    - ".*protocol-screening.*"
+    - "ses-.*protocol-screening.*"
 ```
 
 Notes:
