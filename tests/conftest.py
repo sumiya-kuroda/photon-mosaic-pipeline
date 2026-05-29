@@ -6,6 +6,7 @@ tests, following the DRY principle to avoid duplication.
 """
 
 import argparse
+import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -32,6 +33,10 @@ def run_photon_mosaic():
             "--log-level",
             "DEBUG",
         ]
+
+        if os.getenv("GITHUB_ACTIONS"):
+            cmd.append("--nolock")
+            cmd.append("--latency-wait 30")
 
         result = subprocess.run(
             cmd,

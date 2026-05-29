@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 
@@ -26,6 +27,10 @@ def run_snakemake(workdir, configfile, dry_run=False):
         cmd.insert(1, "--dry-run")
 
     print(" ".join(cmd))
+
+    if os.getenv("GITHUB_ACTIONS"):
+        cmd.append("--nolock")
+        cmd.append("--latency-wait 30")
 
     result = subprocess.run(
         cmd,
