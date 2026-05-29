@@ -30,7 +30,8 @@ def run_snakemake(workdir, configfile, dry_run=False):
 
     if os.getenv("CI"):
         cmd.append("--nolock")
-        cmd.append("--latency-wait 30")
+        cmd.append("--latency-wait")
+        cmd.append("30")
 
     result = subprocess.run(
         cmd,
