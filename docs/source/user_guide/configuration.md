@@ -126,9 +126,9 @@ In order for SLURM jobs to be executed, you have to launch `photon-mosaic` insid
 
 #### GPU resources: `gpu` vs `gres`
 
-The Snakemake SLURM executor plugin offers **two mutually exclusive ways** to request a GPU. Pick one — combining them produces TRES (Trackable Resources) conflicts at the scheduler.
+The Snakemake SLURM executor plugin offers **two mutually exclusive ways** to request a GPU. You have to pick one! Combining them produces TRES (Trackable RESources) conflicts at the scheduler.
 
-- **`gpu`** — request a number of GPUs of any type. The plugin translates this into `--gpus`. Pair with `cpus_per_gpu` if needed.
+- **`gpu`**: request a number of GPUs of any type. The plugin translates this into `--gpus`. Pair with `cpus_per_gpu` if needed.
 
   ```yaml
   slurm:
@@ -136,7 +136,7 @@ The Snakemake SLURM executor plugin offers **two mutually exclusive ways** to re
     cpus_per_gpu: 4
   ```
 
-- **`gres`** — request a specific GPU model via SLURM's Generic Resource string. The plugin translates this into `--gres`. Use this when the cluster has mixed GPU types and you need a specific one (e.g. `"gpu:a100:1"` for one A100). Do **not** also set `gpu`.
+- **`gres`**: request a specific GPU model via SLURM's Generic Resource string. The plugin translates this into `--gres`. Use this when the cluster has mixed GPU types and you need a specific one (e.g. `"gpu:a100:1"` for one A100). Do **not** also set `gpu`.
 
   ```yaml
   slurm:
