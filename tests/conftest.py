@@ -34,7 +34,7 @@ def run_photon_mosaic():
             "DEBUG",
         ]
 
-        if os.getenv("GITHUB_ACTIONS"):
+        if os.getenv("CI"):
             cmd.append("--nolock")
             cmd.append("--latency-wait 30")
 
