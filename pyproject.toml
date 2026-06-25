@@ -1,5 +1,5 @@
 [project]
-name = "photon-mosaic"
+name = "photon-mosaic-pipeline"
 authors = [{name = "Laura Porta", email= "ucqflpo@ucl.ac.uk"}]
 description = "Automating calcium imaging analysis"
 readme = "README.md"
