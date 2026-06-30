@@ -31,7 +31,7 @@ def _force_cellpose_cpu_if_requested():
         import cellpose.core
 
         cellpose.core.use_gpu = lambda *args, **kwargs: False
-    except Exception:
+    except ImportError:
         # Cellpose isn't importable (e.g. anatomical detection disabled) --
         # nothing to force; suite2p will run its non-Cellpose path.
         pass
