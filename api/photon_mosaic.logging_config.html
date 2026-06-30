@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>photon_mosaic.snakemake_utils &#8212; photon-mosaic</title>
+    <title>photon_mosaic.logging_config &#8212; photon-mosaic</title>
   
   
   
@@ -44,13 +44,14 @@
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/photon_mosaic.snakemake_utils';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/photon_mosaic.logging_config';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="canonical" href="https://photon-mosaic.neuroinformatics.dev/api/photon_mosaic.snakemake_utils.html" />
+    <link rel="canonical" href="https://photon-mosaic.neuroinformatics.dev/api/photon_mosaic.logging_config.html" />
     <link rel="icon" href="../_static/light-logo-niu.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="photon_mosaic.rules.suite2p_run" href="photon_mosaic.rules.suite2p_run.html" />
+    <link rel="next" title="photon_mosaic.paths_selection" href="photon_mosaic.paths_selection.html" />
+    <link rel="prev" title="photon_mosaic.cli" href="photon_mosaic.cli.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -358,7 +359,7 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.cli.html">photon_mosaic.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="photon_mosaic.logging_config.html">photon_mosaic.logging_config</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">photon_mosaic.logging_config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.paths_selection.html">photon_mosaic.paths_selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.preprocessing.contrast.html">photon_mosaic.preprocessing.contrast</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.preprocessing.derotation.html">photon_mosaic.preprocessing.derotation</a></li>
@@ -366,7 +367,7 @@
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.preprocessing.stiminterpolation.html">photon_mosaic.preprocessing.stiminterpolation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.rules.preprocessing.html">photon_mosaic.rules.preprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.rules.suite2p_run.html">photon_mosaic.rules.suite2p_run</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">photon_mosaic.snakemake_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="photon_mosaic.snakemake_utils.html">photon_mosaic.snakemake_utils</a></li>
 </ul>
 </div>
 </nav></div>
@@ -410,7 +411,7 @@
     
     <li class="breadcrumb-item"><a href="../api_index.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">photon_mosaic.snakemake_utils</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">photon_mosaic.logging_config</span></li>
   </ul>
 </nav>
 </div>
@@ -427,72 +428,164 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-photon_mosaic.snakemake_utils">
-<span id="photon-mosaic-snakemake-utils"></span><h1>photon_mosaic.snakemake_utils<a class="headerlink" href="#module-photon_mosaic.snakemake_utils" title="Link to this heading">#</a></h1>
-<p>Snakemake utility functions for photon-mosaic.</p>
-<p>This module provides utility functions used in Snakemake workflows,
-including path handling, GPU/CUDA checks, and workflow configuration.</p>
+  <section id="module-photon_mosaic.logging_config">
+<span id="photon-mosaic-logging-config"></span><h1>photon_mosaic.logging_config<a class="headerlink" href="#module-photon_mosaic.logging_config" title="Link to this heading">#</a></h1>
+<p>Logging configuration for photon-mosaic with formatting and colors.</p>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.snakemake_utils.cross_platform_path" title="photon_mosaic.snakemake_utils.cross_platform_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_platform_path</span></code></a>(path)</p></td>
-<td><p>Convert path to string format appropriate for the current platform.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.logging_config.ensure_dir" title="photon_mosaic.logging_config.ensure_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_dir</span></code></a>(path[, mode, parents, exist_ok])</p></td>
+<td><p>Create a directory (Path or str) with optional permission setting.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#photon_mosaic.snakemake_utils.get_snakefile_path" title="photon_mosaic.snakemake_utils.get_snakefile_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_snakefile_path</span></code></a>()</p></td>
-<td><p>Get the path to the Snakemake workflow file.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_mosaic.logging_config.log_list_summary" title="photon_mosaic.logging_config.log_list_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_list_summary</span></code></a>(logger, items, item_type[, ...])</p></td>
+<td><p>Log a summary of a list with optional debug preview.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.snakemake_utils.log_cuda_availability" title="photon_mosaic.snakemake_utils.log_cuda_availability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_cuda_availability</span></code></a>()</p></td>
-<td><p>Log CUDA availability as a sanity check for GPU jobs.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.logging_config.log_section_header" title="photon_mosaic.logging_config.log_section_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_section_header</span></code></a>(logger, title[, char])</p></td>
+<td><p>Log a section header for better visual separation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_mosaic.logging_config.log_subsection" title="photon_mosaic.logging_config.log_subsection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_subsection</span></code></a>(logger, title)</p></td>
+<td><p>Log a subsection for grouping related information.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.logging_config.setup_logging" title="photon_mosaic.logging_config.setup_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_logging</span></code></a>([log_level, log_file, use_colors])</p></td>
+<td><p>Configure logging with improved formatting.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<dl class="py function">
-<dt class="sig sig-object py" id="photon_mosaic.snakemake_utils.get_snakefile_path">
-<span class="sig-prename descclassname"><span class="pre">photon_mosaic.snakemake_utils.</span></span><span class="sig-name descname"><span class="pre">get_snakefile_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/snakemake_utils.html#get_snakefile_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.snakemake_utils.get_snakefile_path" title="Link to this definition">#</a></dt>
-<dd><p>Get the path to the Snakemake workflow file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Path to the Snakefile in the photon_mosaic package.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path</p>
-</dd>
-</dl>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.logging_config.ColoredFormatter" title="photon_mosaic.logging_config.ColoredFormatter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColoredFormatter</span></code></a>([fmt, use_colors])</p></td>
+<td><p>Custom formatter with colors for different log levels.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.ColoredFormatter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">photon_mosaic.logging_config.</span></span><span class="sig-name descname"><span class="pre">ColoredFormatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/logging_config.html#ColoredFormatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.logging_config.ColoredFormatter" title="Link to this definition">#</a></dt>
+<dd><p>Custom formatter with colors for different log levels.</p>
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.logging_config.ColoredFormatter.format" title="photon_mosaic.logging_config.ColoredFormatter.format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format</span></code></a>(record)</p></td>
+<td><p>Format the specified record as text.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.ColoredFormatter.COLORS">
+<span class="sig-name descname"><span class="pre">COLORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'CRITICAL':</span> <span class="pre">'\x1b[35m',</span> <span class="pre">'DEBUG':</span> <span class="pre">'\x1b[36m',</span> <span class="pre">'ERROR':</span> <span class="pre">'\x1b[31m',</span> <span class="pre">'INFO':</span> <span class="pre">'\x1b[32m',</span> <span class="pre">'WARNING':</span> <span class="pre">'\x1b[33m'}</span></span><a class="headerlink" href="#photon_mosaic.logging_config.ColoredFormatter.COLORS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.ColoredFormatter.RESET">
+<span class="sig-name descname"><span class="pre">RESET</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></span><a class="headerlink" href="#photon_mosaic.logging_config.ColoredFormatter.RESET" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.ColoredFormatter.BOLD">
+<span class="sig-name descname"><span class="pre">BOLD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[1m'</span></span><a class="headerlink" href="#photon_mosaic.logging_config.ColoredFormatter.BOLD" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.ColoredFormatter.format">
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/logging_config.html#ColoredFormatter.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.logging_config.ColoredFormatter.format" title="Link to this definition">#</a></dt>
+<dd><p>Format the specified record as text.</p>
+<p>The record’s attribute dictionary is used as the operand to a
+string formatting operation which yields the returned string.
+Before formatting the dictionary, a couple of preparatory steps
+are carried out. The message attribute of the record is computed
+using LogRecord.getMessage(). If the formatting string uses the
+time (as determined by a call to usesTime(), formatTime() is
+called to format the event time. If there is exception information,
+it is formatted using formatException() and appended to the message.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="photon_mosaic.snakemake_utils.cross_platform_path">
-<span class="sig-prename descclassname"><span class="pre">photon_mosaic.snakemake_utils.</span></span><span class="sig-name descname"><span class="pre">cross_platform_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/snakemake_utils.html#cross_platform_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.snakemake_utils.cross_platform_path" title="Link to this definition">#</a></dt>
-<dd><p>Convert path to string format appropriate for the current platform.</p>
-<p>On Windows, uses forward slashes (as_posix()) for Snakemake compatibility.
-On Unix-like systems, uses native path separators (str()).</p>
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.ensure_dir">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.logging_config.</span></span><span class="sig-name descname"><span class="pre">ensure_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">493</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exist_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/logging_config.html#ensure_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.logging_config.ensure_dir" title="Link to this definition">#</a></dt>
+<dd><p>Create a directory (Path or str) with optional permission setting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – Path object to convert</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em><em> | </em><em>Path</em>) – Directory to create.</p></li>
+<li><p><strong>mode</strong> (<em>int</em><em> | </em><em>None</em>) – POSIX permission bits to set on the directory (e.g. 0o755). If None,
+permission change is skipped.</p></li>
+<li><p><strong>parents</strong> (<em>bool</em>) – Whether to create parent directories.</p></li>
+<li><p><strong>exist_ok</strong> (<em>bool</em>) – Whether to ignore if the directory already exists.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>String representation of the path appropriate for the platform</p>
+<dd class="field-even"><p>The Path object for the created directory.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>Path</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="photon_mosaic.snakemake_utils.log_cuda_availability">
-<span class="sig-prename descclassname"><span class="pre">photon_mosaic.snakemake_utils.</span></span><span class="sig-name descname"><span class="pre">log_cuda_availability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/snakemake_utils.html#log_cuda_availability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.snakemake_utils.log_cuda_availability" title="Link to this definition">#</a></dt>
-<dd><p>Log CUDA availability as a sanity check for GPU jobs.</p>
-<p>This function checks if CUDA is available and logs relevant
-GPU information. Useful for verifying that GPU resources
-are properly allocated in SLURM jobs.</p>
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.setup_logging">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.logging_config.</span></span><span class="sig-name descname"><span class="pre">setup_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/logging_config.html#setup_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.logging_config.setup_logging" title="Link to this definition">#</a></dt>
+<dd><p>Configure logging with improved formatting.</p>
+<p>This function is safe to call multiple times. If logging handlers are
+already configured (e.g., by the CLI), it will preserve them and only
+update the log level. This allows the Snakefile to adjust verbosity
+without losing the file handler set up by the CLI.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if CUDA is available, False otherwise</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_level</strong> (<em>str</em>) – Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)</p></li>
+<li><p><strong>log_file</strong> (<em>Path</em><em>, </em><em>optional</em>) – Path to log file for file handler. Only used if no handlers exist yet.</p></li>
+<li><p><strong>use_colors</strong> (<em>bool</em>) – Whether to use colored output for console. Only used if no handlers
+exist yet.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>logger</strong> – Configured root logger</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>logging.Logger</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When called from the Snakefile after the CLI has already configured
+logging, this function will:
+- Keep the existing file handler (so Snakemake logs go to the same file)
+- Keep the existing console handler
+- Update the log level on both root logger and console handler
+- Ignore the <cite>log_file</cite> and <cite>use_colors</cite> parameters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.log_section_header">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.logging_config.</span></span><span class="sig-name descname"><span class="pre">log_section_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">char</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'='</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/logging_config.html#log_section_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.logging_config.log_section_header" title="Link to this definition">#</a></dt>
+<dd><p>Log a section header for better visual separation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.log_subsection">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.logging_config.</span></span><span class="sig-name descname"><span class="pre">log_subsection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/logging_config.html#log_subsection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.logging_config.log_subsection" title="Link to this definition">#</a></dt>
+<dd><p>Log a subsection for grouping related information.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_mosaic.logging_config.log_list_summary">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.logging_config.</span></span><span class="sig-name descname"><span class="pre">log_list_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preview_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/logging_config.html#log_list_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.logging_config.log_list_summary" title="Link to this definition">#</a></dt>
+<dd><p>Log a summary of a list with optional debug preview.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> (<em>logging.Logger</em>) – Logger instance to use</p></li>
+<li><p><strong>items</strong> (<em>list</em>) – List of items to summarize</p></li>
+<li><p><strong>item_type</strong> (<em>str</em>) – Description of the items (e.g., “Preprocessing targets”,
+“Suite2p targets”)</p></li>
+<li><p><strong>preview_count</strong> (<em>int</em>) – Number of items to show in debug mode (default: 5)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -510,13 +603,22 @@ are properly allocated in SLURM jobs.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="photon_mosaic.rules.suite2p_run.html"
+       href="photon_mosaic.cli.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">photon_mosaic.rules.suite2p_run</p>
+        <p class="prev-next-title">photon_mosaic.cli</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="photon_mosaic.paths_selection.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">photon_mosaic.paths_selection</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -537,9 +639,18 @@ are properly allocated in SLURM jobs.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.snakemake_utils.get_snakefile_path"><code class="docutils literal notranslate"><span class="pre">get_snakefile_path()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.snakemake_utils.cross_platform_path"><code class="docutils literal notranslate"><span class="pre">cross_platform_path()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.snakemake_utils.log_cuda_availability"><code class="docutils literal notranslate"><span class="pre">log_cuda_availability()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.ColoredFormatter"><code class="docutils literal notranslate"><span class="pre">ColoredFormatter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.ColoredFormatter.COLORS"><code class="docutils literal notranslate"><span class="pre">ColoredFormatter.COLORS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.ColoredFormatter.RESET"><code class="docutils literal notranslate"><span class="pre">ColoredFormatter.RESET</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.ColoredFormatter.BOLD"><code class="docutils literal notranslate"><span class="pre">ColoredFormatter.BOLD</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.ColoredFormatter.format"><code class="docutils literal notranslate"><span class="pre">ColoredFormatter.format()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.ensure_dir"><code class="docutils literal notranslate"><span class="pre">ensure_dir()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.setup_logging"><code class="docutils literal notranslate"><span class="pre">setup_logging()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.log_section_header"><code class="docutils literal notranslate"><span class="pre">log_section_header()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.log_subsection"><code class="docutils literal notranslate"><span class="pre">log_subsection()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.logging_config.log_list_summary"><code class="docutils literal notranslate"><span class="pre">log_list_summary()</span></code></a></li>
 </ul>
   </nav></div>
 

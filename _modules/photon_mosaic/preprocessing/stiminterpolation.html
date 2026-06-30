@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>photon_mosaic.preprocessing.derotation &#8212; photon-mosaic</title>
+    <title>photon_mosaic.preprocessing.stiminterpolation &#8212; photon-mosaic</title>
   
   
   
@@ -43,9 +43,9 @@
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/photon_mosaic/preprocessing/derotation';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/photon_mosaic/preprocessing/stiminterpolation';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="canonical" href="https://photon-mosaic.neuroinformatics.dev/_modules/photon_mosaic/preprocessing/derotation.html" />
+    <link rel="canonical" href="https://photon-mosaic.neuroinformatics.dev/_modules/photon_mosaic/preprocessing/stiminterpolation.html" />
     <link rel="icon" href="../../../_static/light-logo-niu.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -378,7 +378,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">photon_mosaic.preprocessing.derotation</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">photon_mosaic.preprocessing.stiminterpolation</span></li>
   </ul>
 </nav>
 </div>
@@ -395,83 +395,133 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for photon_mosaic.preprocessing.derotation</h1><div class="highlight"><pre>
+  <h1>Source code for photon_mosaic.preprocessing.stiminterpolation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Derotation preprocessing step for photon-mosaic.</span>
+<span class="sd">Photonstimulation artefact removal step for photon-mosaic.</span>
 
-<span class="sd">This module provides a function to derotate image data using the derotation</span>
-<span class="sd">package.</span>
+<span class="sd">This module provides a function to remove artefacts by holographic</span>
+<span class="sd">photostimulation using the stiminterp package.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">derotation.derotate_batch</span><span class="w"> </span><span class="kn">import</span> <span class="n">derotate</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tifffile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stiminterp</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_stiminterp</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="run">
-<a class="viewcode-back" href="../../../api/photon_mosaic.preprocessing.derotation.html#photon_mosaic.preprocessing.derotation.run">[docs]</a>
+<a class="viewcode-back" href="../../../api/photon_mosaic.preprocessing.stiminterpolation.html#photon_mosaic.preprocessing.stiminterpolation.run">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
     <span class="n">dataset_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">output_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-    <span class="n">glob_naming_pattern_tif</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-    <span class="n">glob_naming_pattern_bin</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-    <span class="n">path_to_stimulus_randperm</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">ses_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">tiff_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">path_to_stim_h5</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Derotate image data using the derotation pipeline.</span>
+<span class="sd">    Photostimulation artefact removal using stiminterp.</span>
+
+<span class="sd">    Runs stiminterp on the input TIFF and saves the processed TIFF and its</span>
+<span class="sd">    ScanImage metadata as a JSON file to the output folder if required.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    dataset_folder : Path</span>
-<span class="sd">        The path to the dataset folder.</span>
+<span class="sd">        Path to the dataset folder containing the input TIFF files.</span>
 <span class="sd">    output_folder : Path</span>
-<span class="sd">        The path to the output folder.</span>
-<span class="sd">    glob_naming_pattern_tif : Union[str, List[str]]</span>
-<span class="sd">        Pattern(s) to match tif files. Can be a single pattern or a list of</span>
-<span class="sd">        patterns where the session index selects the appropriate pattern.</span>
-<span class="sd">    glob_naming_pattern_bin : Union[str, List[str]]</span>
-<span class="sd">        Pattern(s) to match bin files. Can be a single pattern or a list of</span>
-<span class="sd">        patterns where the session index selects the appropriate pattern.</span>
-<span class="sd">    path_to_stimulus_randperm : str</span>
-<span class="sd">        Path to the stimulus randomization file.</span>
-<span class="sd">    ses_idx : int, optional</span>
-<span class="sd">        Session index to process. Default is 0.</span>
+<span class="sd">        Path to the output folder where symlinks will be created.</span>
+<span class="sd">    tiff_name : str</span>
+<span class="sd">        Name of the TIFF file to process.</span>
+<span class="sd">    path_to_stim_h5 : str | None</span>
+<span class="sd">        Path to the stimulation TTL HDF5 file. Defaults to None.</span>
+<span class="sd">    save_metadata : bool</span>
+<span class="sd">        Whether to save metadata as separate json file</span>
 <span class="sd">    **kwargs : dict</span>
-<span class="sd">        Additional arguments for the derotation pipeline.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    None</span>
-<span class="sd">        The function saves the derotated data to the output folder and returns</span>
-<span class="sd">        nothing.</span>
+<span class="sd">        Additional keyword arguments for stiminterp pipeline.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert paths to Path objects if they&#39;re strings</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">dataset_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dataset_folder</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">output_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_folder</span><span class="p">)</span>
 
-    <span class="c1"># Convert string patterns to lists if needed</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob_naming_pattern_tif</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">pattern_tif</span> <span class="o">=</span> <span class="n">glob_naming_pattern_tif</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pattern_tif</span> <span class="o">=</span> <span class="n">glob_naming_pattern_tif</span><span class="p">[</span><span class="n">ses_idx</span><span class="p">]</span>
+    <span class="c1"># Create output directory</span>
+    <span class="n">output_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob_naming_pattern_bin</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">pattern_bin</span> <span class="o">=</span> <span class="n">glob_naming_pattern_bin</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pattern_bin</span> <span class="o">=</span> <span class="n">glob_naming_pattern_bin</span><span class="p">[</span><span class="n">ses_idx</span><span class="p">]</span>
+    <span class="c1"># Define input and output paths</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">output_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;stiminterpolated_</span><span class="si">{</span><span class="n">tiff_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Running derotation pipeline for </span><span class="si">{</span><span class="n">pattern_tif</span><span class="si">}</span><span class="s2"> with&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">pattern_bin</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Try to find the input file</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">dataset_folder</span> <span class="o">/</span> <span class="n">tiff_name</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="c1"># Use rglob to find the file recursively</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">input_file</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">dataset_folder</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">tiff_name</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Found input file using recursive search: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not find </span><span class="si">{</span><span class="n">tiff_name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">dataset_folder</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Run stiminterp</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running stiminterp pipeline for </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">path_to_stim_h5</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">path_to_stim_h5</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">run_stiminterp</span><span class="p">(</span>
+        <span class="n">input_tif</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span>
+        <span class="n">input_h5</span><span class="o">=</span><span class="n">path_to_stim_h5</span><span class="p">,</span>
+        <span class="n">output_tif</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">),</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">derotate</span><span class="p">(</span>
-        <span class="n">dataset_folder</span><span class="o">=</span><span class="n">dataset_folder</span><span class="p">,</span>
-        <span class="n">output_folder</span><span class="o">=</span><span class="n">output_folder</span><span class="p">,</span>
-        <span class="n">glob_naming_pattern_tif</span><span class="o">=</span><span class="n">pattern_tif</span><span class="p">,</span>
-        <span class="n">glob_naming_pattern_bin</span><span class="o">=</span><span class="n">pattern_bin</span><span class="p">,</span>
-        <span class="n">folder_suffix</span><span class="o">=</span><span class="s2">&quot;incremental&quot;</span> <span class="k">if</span> <span class="s2">&quot;increment&quot;</span> <span class="ow">in</span> <span class="n">pattern_tif</span> <span class="k">else</span> <span class="s2">&quot;full&quot;</span><span class="p">,</span>
-        <span class="n">path_to_stimulus_randperm</span><span class="o">=</span><span class="n">path_to_stimulus_randperm</span><span class="p">,</span>
-    <span class="p">)</span></div>
+
+    <span class="c1"># Save metadata as JSON if requested</span>
+    <span class="k">if</span> <span class="n">save_metadata</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">parse_si_metadata</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">json_path</span> <span class="o">=</span> <span class="n">output_path</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span>
+                <span class="n">output_path</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;_metadata.json&quot;</span>
+            <span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved metadata to </span><span class="si">{</span><span class="n">json_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No ScanImage metadata found in </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_si_metadata">
+<a class="viewcode-back" href="../../../api/photon_mosaic.preprocessing.stiminterpolation.html#photon_mosaic.preprocessing.stiminterpolation.parse_si_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_si_metadata</span><span class="p">(</span><span class="n">tiff_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads metadata from a Scanimage TIFF and return a dictionary with</span>
+<span class="sd">    specified key values.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tiff_path: path to TIFF or directory containing tiffs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: dictionary of SI parameters</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tiff_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">!=</span> <span class="s2">&quot;.tif&quot;</span><span class="p">:</span>
+        <span class="n">tiffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">tiff_path</span> <span class="o">/</span> <span class="n">tiff</span> <span class="k">for</span> <span class="n">tiff</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tiff_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.tif&quot;</span><span class="p">))]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tiffs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">tiff_path</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">if</span> <span class="n">tiffs</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffFile</span><span class="p">(</span><span class="n">tiffs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">scanimage_metadata</span><span class="p">[</span><span class="s2">&quot;FrameData&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">metadata</span></div>
 
 </pre></div>
 

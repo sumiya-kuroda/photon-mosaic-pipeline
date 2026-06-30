@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>photon_mosaic.snakemake_utils &#8212; photon-mosaic</title>
+    <title>photon_mosaic.paths_selection &#8212; photon-mosaic</title>
   
   
   
@@ -44,13 +44,14 @@
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/photon_mosaic.snakemake_utils';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/photon_mosaic.paths_selection';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="canonical" href="https://photon-mosaic.neuroinformatics.dev/api/photon_mosaic.snakemake_utils.html" />
+    <link rel="canonical" href="https://photon-mosaic.neuroinformatics.dev/api/photon_mosaic.paths_selection.html" />
     <link rel="icon" href="../_static/light-logo-niu.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="photon_mosaic.rules.suite2p_run" href="photon_mosaic.rules.suite2p_run.html" />
+    <link rel="next" title="photon_mosaic.preprocessing.contrast" href="photon_mosaic.preprocessing.contrast.html" />
+    <link rel="prev" title="photon_mosaic.logging_config" href="photon_mosaic.logging_config.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -359,14 +360,14 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.cli.html">photon_mosaic.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.logging_config.html">photon_mosaic.logging_config</a></li>
-<li class="toctree-l1"><a class="reference internal" href="photon_mosaic.paths_selection.html">photon_mosaic.paths_selection</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">photon_mosaic.paths_selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.preprocessing.contrast.html">photon_mosaic.preprocessing.contrast</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.preprocessing.derotation.html">photon_mosaic.preprocessing.derotation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.preprocessing.noop.html">photon_mosaic.preprocessing.noop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.preprocessing.stiminterpolation.html">photon_mosaic.preprocessing.stiminterpolation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.rules.preprocessing.html">photon_mosaic.rules.preprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="photon_mosaic.rules.suite2p_run.html">photon_mosaic.rules.suite2p_run</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">photon_mosaic.snakemake_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="photon_mosaic.snakemake_utils.html">photon_mosaic.snakemake_utils</a></li>
 </ul>
 </div>
 </nav></div>
@@ -410,7 +411,7 @@
     
     <li class="breadcrumb-item"><a href="../api_index.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">photon_mosaic.snakemake_utils</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">photon_mosaic.paths_selection</span></li>
   </ul>
 </nav>
 </div>
@@ -427,72 +428,132 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-photon_mosaic.snakemake_utils">
-<span id="photon-mosaic-snakemake-utils"></span><h1>photon_mosaic.snakemake_utils<a class="headerlink" href="#module-photon_mosaic.snakemake_utils" title="Link to this heading">#</a></h1>
-<p>Snakemake utility functions for photon-mosaic.</p>
-<p>This module provides utility functions used in Snakemake workflows,
-including path handling, GPU/CUDA checks, and workflow configuration.</p>
+  <section id="module-photon_mosaic.paths_selection">
+<span id="photon-mosaic-paths-selection"></span><h1>photon_mosaic.paths_selection<a class="headerlink" href="#module-photon_mosaic.paths_selection" title="Link to this heading">#</a></h1>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.snakemake_utils.cross_platform_path" title="photon_mosaic.snakemake_utils.cross_platform_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cross_platform_path</span></code></a>(path)</p></td>
-<td><p>Convert path to string format appropriate for the current platform.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.paths_selection.adapt_paths_to_output_pattern" title="photon_mosaic.paths_selection.adapt_paths_to_output_pattern"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adapt_paths_to_output_pattern</span></code></a>(...)</p></td>
+<td><p>Convert raw TIFF paths to their expected preprocessed output paths.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#photon_mosaic.snakemake_utils.get_snakefile_path" title="photon_mosaic.snakemake_utils.get_snakefile_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_snakefile_path</span></code></a>()</p></td>
-<td><p>Get the path to the Snakemake workflow file.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_mosaic.paths_selection.find_raw_data_paths" title="photon_mosaic.paths_selection.find_raw_data_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_raw_data_paths</span></code></a>(project_path[, ...])</p></td>
+<td><p>Find all raw TIFF files under a NeuroBlueprint-compliant project.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.snakemake_utils.log_cuda_availability" title="photon_mosaic.snakemake_utils.log_cuda_availability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_cuda_availability</span></code></a>()</p></td>
-<td><p>Log CUDA availability as a sanity check for GPU jobs.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.paths_selection.set_up_dff_targets" title="photon_mosaic.paths_selection.set_up_dff_targets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_up_dff_targets</span></code></a>(preproc_targets)</p></td>
+<td><p>Generate dF/F target paths from preprocessed TIFF paths.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#photon_mosaic.paths_selection.set_up_neuropil_targets" title="photon_mosaic.paths_selection.set_up_neuropil_targets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_up_neuropil_targets</span></code></a>(preproc_targets)</p></td>
+<td><p>Generate neuropil correction target paths from preprocessed TIFF paths.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#photon_mosaic.paths_selection.set_up_suite2p_targets" title="photon_mosaic.paths_selection.set_up_suite2p_targets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_up_suite2p_targets</span></code></a>(preproc_targets)</p></td>
+<td><p>Generate Suite2p output target paths from preprocessed TIFF paths.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py function">
-<dt class="sig sig-object py" id="photon_mosaic.snakemake_utils.get_snakefile_path">
-<span class="sig-prename descclassname"><span class="pre">photon_mosaic.snakemake_utils.</span></span><span class="sig-name descname"><span class="pre">get_snakefile_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/snakemake_utils.html#get_snakefile_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.snakemake_utils.get_snakefile_path" title="Link to this definition">#</a></dt>
-<dd><p>Get the path to the Snakemake workflow file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Path to the Snakefile in the photon_mosaic package.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="photon_mosaic.snakemake_utils.cross_platform_path">
-<span class="sig-prename descclassname"><span class="pre">photon_mosaic.snakemake_utils.</span></span><span class="sig-name descname"><span class="pre">cross_platform_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/snakemake_utils.html#cross_platform_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.snakemake_utils.cross_platform_path" title="Link to this definition">#</a></dt>
-<dd><p>Convert path to string format appropriate for the current platform.</p>
-<p>On Windows, uses forward slashes (as_posix()) for Snakemake compatibility.
-On Unix-like systems, uses native path separators (str()).</p>
+<dt class="sig sig-object py" id="photon_mosaic.paths_selection.find_raw_data_paths">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.paths_selection.</span></span><span class="sig-name descname"><span class="pre">find_raw_data_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiff_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['*.tif']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_datasets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_sessions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/paths_selection.html#find_raw_data_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.paths_selection.find_raw_data_paths" title="Link to this definition">#</a></dt>
+<dd><p>Find all raw TIFF files under a NeuroBlueprint-compliant project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – Path object to convert</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Root of the project, expected to follow NeuroBlueprint format
+(i.e. contains a <code class="docutils literal notranslate"><span class="pre">rawdata/sub-*/ses-*/funcimg/</span></code> structure).</p></li>
+<li><p><strong>tiff_patterns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Glob patterns for TIFF files to include (e.g. <code class="docutils literal notranslate"><span class="pre">[&quot;*_00001.tif&quot;]</span></code>).</p></li>
+<li><p><strong>exclude_datasets</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Regex patterns matched against subject folder names to exclude
+(e.g. [“sub-test”, “sub-IAA.*”]).</p></li>
+<li><p><strong>exclude_sessions</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Regex patterns matched against session folder names to exclude
+(e.g. [“.*protocol-screening.*”, “ses-screening.*”]).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>String representation of the path appropriate for the platform</p>
+<dd class="field-even"><p>Sorted list of paths to all matching TIFF files.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="photon_mosaic.snakemake_utils.log_cuda_availability">
-<span class="sig-prename descclassname"><span class="pre">photon_mosaic.snakemake_utils.</span></span><span class="sig-name descname"><span class="pre">log_cuda_availability</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/snakemake_utils.html#log_cuda_availability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.snakemake_utils.log_cuda_availability" title="Link to this definition">#</a></dt>
-<dd><p>Log CUDA availability as a sanity check for GPU jobs.</p>
-<p>This function checks if CUDA is available and logs relevant
-GPU information. Useful for verifying that GPU resources
-are properly allocated in SLURM jobs.</p>
+<dt class="sig sig-object py" id="photon_mosaic.paths_selection.adapt_paths_to_output_pattern">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.paths_selection.</span></span><span class="sig-name descname"><span class="pre">adapt_paths_to_output_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_selected_tiff_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/paths_selection.html#adapt_paths_to_output_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.paths_selection.adapt_paths_to_output_pattern" title="Link to this definition">#</a></dt>
+<dd><p>Convert raw TIFF paths to their expected preprocessed output paths.</p>
+<p>Replaces the rawdata directory component with derivatives and prepends
+output_pattern to the filename.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if CUDA is available, False otherwise</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>all_selected_tiff_paths</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Raw TIFF paths, expected to contain a rawdata component.</p></li>
+<li><p><strong>output_pattern</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – String to prepend to the output filename (e.g. <code class="docutils literal notranslate"><span class="pre">motion_corrected_</span></code>).</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding output paths under the derivatives directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a path does not contain a rawdata component.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_mosaic.paths_selection.set_up_suite2p_targets">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.paths_selection.</span></span><span class="sig-name descname"><span class="pre">set_up_suite2p_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preproc_targets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/paths_selection.html#set_up_suite2p_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.paths_selection.set_up_suite2p_targets" title="Link to this definition">#</a></dt>
+<dd><p>Generate Suite2p output target paths from preprocessed TIFF paths.</p>
+<p>For each preprocessed TIFF, generates the expected Suite2p output files
+(F.npy and data.bin) under a suite2p/plane0/ subdirectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>preproc_targets</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Preprocessed TIFF paths (output of adapt_paths_to_output_pattern).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Suite2p target paths (F.npy and data.bin for each input).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_mosaic.paths_selection.set_up_neuropil_targets">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.paths_selection.</span></span><span class="sig-name descname"><span class="pre">set_up_neuropil_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preproc_targets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/paths_selection.html#set_up_neuropil_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.paths_selection.set_up_neuropil_targets" title="Link to this definition">#</a></dt>
+<dd><p>Generate neuropil correction target paths from preprocessed TIFF paths.</p>
+<p>For each preprocessed TIFF, generates the expected neuropil output files
+under a neuropil/plane0/ subdirectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>preproc_targets</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Preprocessed TIFF paths (output of adapt_paths_to_output_pattern).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Neuropil target paths (Fc.npy for each input).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="photon_mosaic.paths_selection.set_up_dff_targets">
+<span class="sig-prename descclassname"><span class="pre">photon_mosaic.paths_selection.</span></span><span class="sig-name descname"><span class="pre">set_up_dff_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preproc_targets</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/photon_mosaic/paths_selection.html#set_up_dff_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#photon_mosaic.paths_selection.set_up_dff_targets" title="Link to this definition">#</a></dt>
+<dd><p>Generate dF/F target paths from preprocessed TIFF paths.</p>
+<p>For each preprocessed TIFF, generates the expected dFF output files
+under a dff/plane0/ subdirectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>preproc_targets</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Preprocessed TIFF paths (output of adapt_paths_to_output_pattern).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dFF target paths (dFF.npy for each input).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -510,13 +571,22 @@ are properly allocated in SLURM jobs.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="photon_mosaic.rules.suite2p_run.html"
+       href="photon_mosaic.logging_config.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">photon_mosaic.rules.suite2p_run</p>
+        <p class="prev-next-title">photon_mosaic.logging_config</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="photon_mosaic.preprocessing.contrast.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">photon_mosaic.preprocessing.contrast</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -537,9 +607,11 @@ are properly allocated in SLURM jobs.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.snakemake_utils.get_snakefile_path"><code class="docutils literal notranslate"><span class="pre">get_snakefile_path()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.snakemake_utils.cross_platform_path"><code class="docutils literal notranslate"><span class="pre">cross_platform_path()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.snakemake_utils.log_cuda_availability"><code class="docutils literal notranslate"><span class="pre">log_cuda_availability()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.paths_selection.find_raw_data_paths"><code class="docutils literal notranslate"><span class="pre">find_raw_data_paths()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.paths_selection.adapt_paths_to_output_pattern"><code class="docutils literal notranslate"><span class="pre">adapt_paths_to_output_pattern()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.paths_selection.set_up_suite2p_targets"><code class="docutils literal notranslate"><span class="pre">set_up_suite2p_targets()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.paths_selection.set_up_neuropil_targets"><code class="docutils literal notranslate"><span class="pre">set_up_neuropil_targets()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photon_mosaic.paths_selection.set_up_dff_targets"><code class="docutils literal notranslate"><span class="pre">set_up_dff_targets()</span></code></a></li>
 </ul>
   </nav></div>
 
