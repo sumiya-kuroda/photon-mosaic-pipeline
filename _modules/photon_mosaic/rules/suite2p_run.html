@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../../../_static/documentation_options.js?v=4621528c"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
@@ -127,7 +127,7 @@
     <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
   
   
-    <p class="title logo__title">photon-mosaic v0.3.0</p>
+    <p class="title logo__title">photon-mosaic v0.3.1</p>
   
 </a></div>
     
@@ -400,12 +400,39 @@
 <span class="sd">Snakemake rule for running Suite2P.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">suite2p</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_s2p</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">suite2p.default_ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_ops</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_force_cellpose_cpu_if_requested</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Force Cellpose onto CPU when ``PHOTON_MOSAIC_FORCE_CPU=1``.</span>
+
+<span class="sd">    Suite2p&#39;s anatomical detection runs Cellpose on a GPU whenever</span>
+<span class="sd">    ``cellpose.core.use_gpu()`` reports one is available. On a real</span>
+<span class="sd">    Apple-Silicon machine the MPS backend works and is the right default, so</span>
+<span class="sd">    this is **off by default**. But GitHub-hosted macOS runners expose an MPS</span>
+<span class="sd">    device that torch detects and can allocate on, yet which computes</span>
+<span class="sd">    Cellpose-SAM incorrectly -- it returns 0 masks, so Suite2p writes no</span>
+<span class="sd">    ``F.npy`` and the pipeline fails. Setting ``PHOTON_MOSAIC_FORCE_CPU=1``</span>
+<span class="sd">    pins Cellpose to the CPU, which produces correct masks everywhere. The</span>
+<span class="sd">    test suite sets this var (see ``tests/conftest.py``); the snakemake</span>
+<span class="sd">    subprocesses inherit it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PHOTON_MOSAIC_FORCE_CPU&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">cellpose.core</span>
+
+        <span class="n">cellpose</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">use_gpu</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="c1"># Cellpose isn&#39;t importable (e.g. anatomical detection disabled) --</span>
+        <span class="c1"># nothing to force; suite2p will run its non-Cellpose path.</span>
+        <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="run_suite2p">
@@ -439,6 +466,8 @@
 <span class="sd">        dataset folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">save_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">stat_path</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">_force_cellpose_cpu_if_requested</span><span class="p">()</span>
 
     <span class="n">ops</span> <span class="o">=</span> <span class="n">get_edited_options</span><span class="p">(</span>
         <span class="n">input_path</span><span class="o">=</span><span class="n">dataset_folder</span><span class="p">,</span>
