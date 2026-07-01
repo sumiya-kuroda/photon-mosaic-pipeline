@@ -31,12 +31,12 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/neuroinformatics-unit/photon-mosaic"
-"Bug Tracker" = "https://github.com/neuroinformatics-unit/photon-mosaic/issues"
+"Homepage" = "https://github.com/photon-mosaic/photon-mosaic-pipeline"
+"Bug Tracker" = "https://github.com/photon-mosaic/photon-mosaic-pipeline/issues"
 "Documentation" = "https://pipeline.photon-mosaic.org"
 
-"Source Code" = "https://github.com/neuroinformatics-unit/photon-mosaic"
-"User Support" = "https://github.com/neuroinformatics-unit/photon-mosaic/issues"
+"Source Code" = "https://github.com/photon-mosaic/photon-mosaic-pipeline"
+"User Support" = "https://github.com/photon-mosaic/photon-mosaic-pipeline/issues"
 
 [project.scripts]
 photon-mosaic = "photon_mosaic.cli:main"

@@ -1,7 +1,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/photon-mosaic.svg)](https://pypi.org/project/photon-mosaic)
 [![PyPI Version](https://img.shields.io/pypi/v/photon-mosaic.svg)](https://pypi.org/project/photon-mosaic)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-orange.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![CI](https://img.shields.io/github/actions/workflow/status/neuroinformatics-unit/photon-mosaic/test_and_deploy.yml?label=CI)](https://github.com/neuroinformatics-unit/photon-mosaic/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/photon-mosaic/photon-mosaic-pipeline/test_and_deploy.yml?label=CI)](https://github.com/photon-mosaic/photon-mosaic-pipeline/actions)
 [![Code style: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/format.json)](https://github.com/astral-sh/ruff)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
@@ -12,7 +12,7 @@
 Each analysis step is integrated into an automated workflow, allowing you to chain preprocessing, registration, signal extraction, and post-processing steps into a single, reproducible pipeline. The design prioritizes usability for labs that process many imaging sessions and need to scale across an HPC cluster.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/neuroinformatics-unit/photon-mosaic/refs/heads/main/docs/source/_static/pm_illustration1.png" alt="photon-mosaic"/>
+  <img src="https://raw.githubusercontent.com/photon-mosaic/photon-mosaic-pipeline/refs/heads/main/docs/source/_static/pm_illustration1.png" alt="photon-mosaic"/>
 </p>
 
 This is made possible by [Snakemake](https://snakemake.readthedocs.io/en/stable/), a workflow management system that provides a powerful and flexible framework for defining and executing complex data processing pipelines. Snakemake automatically builds a directed acyclic graph (DAG) of all the steps in your analysis, ensuring that each step is executed in the correct order and that intermediate results are cached to avoid redundant computations. `photon-mosaic` also includes a [SLURM executor plugin for Snakemake](https://github.com/snakemake/snakemake-executor-plugin-slurm) to seamlessly scale your analysis across an HPC cluster. To ensure consistency and reproducibility, `photon-mosaic` writes processed data according to the [NeuroBlueprint](https://neuroblueprint.neuroinformatics.dev/latest/index.html) data standard for organizing and storing multiphoton imaging data.
@@ -31,7 +31,7 @@ The goal of `photon-mosaic` is to provide a modular, extensible, and user-friend
 - Neuropil subtraction / decontamination: methods from the [AllenSDK](https://allensdk.readthedocs.io/en/latest/allensdk.brain_observatory.r_neuropil.html) and [AST-model](https://github.com/znamlab/2p-preprocess).
 - Spike deconvolution: [OASIS](https://github.com/j-friedrich/OASIS) and [CASCADE](https://github.com/HelmchenLabSoftware/Cascade).
 
-See [issues on GitHub](https://github.com/neuroinformatics-unit/photon-mosaic/issues) and the [project board](https://github.com/orgs/neuroinformatics-unit/projects/17) for more details and participate in planning. Please refer to our [guidelines](https://pipeline.photon-mosaic.org/contributing.html) to understand how to contribute.
+See [issues on GitHub](https://github.com/photon-mosaic/photon-mosaic-pipeline/issues) for more details and participate in planning. Please refer to our [guidelines](https://pipeline.photon-mosaic.org/contributing.html) to understand how to contribute.
 
 ## Installation
 
