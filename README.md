@@ -11,8 +11,11 @@
 
 > [!NOTE]
 > **This project was renamed from `photon-mosaic` to `photon-mosaic-pipeline`.**
+>
 > The name `photon-mosaic` now refers to a separate package under the same organisation: [`photon-mosaic`](https://github.com/photon-mosaic/photon-mosaic), a Python API (built on [SpikeInterface](https://github.com/SpikeInterface/spikeinterface)) for *exploring and comparing* multiphoton analysis methods interactively — mixing and matching algorithms for each step to find what works for your data.
+>
 > `photon-mosaic-pipeline` (this repository) is the complementary package for *running the analysis you settled on* as a reproducible, batch-processed workflow at scale.
+>
 > Both are part of the broader **PhotonMosaic** framework, and we plan to integrate the two so the pipeline can run the methods you prototype with the API.
 
 Each analysis step is integrated into an automated workflow, allowing you to chain preprocessing, registration, signal extraction, and post-processing steps into a single, reproducible pipeline. The design prioritizes usability for labs that process many imaging sessions and need to scale across an HPC cluster.
