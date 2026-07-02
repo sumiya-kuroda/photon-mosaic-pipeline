@@ -121,4 +121,33 @@ Photon-mosaic uses Cellpose 4 by default, with `cpsam` model. If you want to use
 
 In order for SLURM jobs to be executed, you have to launch `photon-mosaic` inside an environment in an interactive job in your cluster.
 
+#### GPU resources: `gpu` vs `gres`
+
+The Snakemake SLURM executor plugin offers **two mutually exclusive ways** to request a GPU. You have to pick one! Combining them produces TRES (Trackable RESources) conflicts at the scheduler.
+
+- **`gpu`**: request a number of GPUs of any type. The plugin translates this into `--gpus`. Pair with `cpus_per_gpu` if needed.
+
+  ```yaml
+  slurm:
+    gpu: 1
+    cpus_per_gpu: 4
+  ```
+
+- **`gres`**: request a specific GPU model via SLURM's Generic Resource string. The plugin translates this into `--gres`. Use this when the cluster has mixed GPU types and you need a specific one (e.g. `"gpu:a100:1"` for one A100). Do **not** also set `gpu`.
+
+  ```yaml
+  slurm:
+    gres: "gpu:a100:1"
+  ```
+
+These keys live under `slurm:` but are forwarded to the rule level, not to Snakemake's `--default-resources`. On startup you will see an `INFO` log line such as:
+
+```
+INFO:photon_mosaic.cli:Skipping gres in --default-resources (set at rule level to avoid conflicts): gpu:a100:1
+```
+
+That is expected behaviour, not an error: it confirms the value was picked up and routed to per-rule resources to avoid TRES conflicts. The same applies to `gpu` and `cpus_per_gpu`.
+
+For the upstream mechanics, see the [GRES alternative method](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html#alternative-method-using-the-gres-resource) in the Snakemake SLURM plugin docs.
+
 For more details about SLURM configuration options, see the [Snakemake SLURM executor plugin documentation](https://github.com/snakemake/snakemake-executor-plugin-slurm).
