@@ -33,7 +33,7 @@ API Reference
 =============
 
 This section contains automatically generated documentation for the
-`photon-mosaic` package.
+`photon-mosaic-pipeline` package.
 
 .. toctree::
    :maxdepth: 2
