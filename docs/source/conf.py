@@ -122,7 +122,7 @@ html_theme_options = {
             # Label for this link
             "name": "GitHub",
             # URL where the link will redirect
-            "url": "https://github.com/neuroinformatics-unit/photon-mosaic",  # required
+            "url": "https://github.com/photon-mosaic/photon-mosaic-pipeline",  # required
             # Icon class (if "type": "fontawesome"),
             # or path to local image (if "type": "local")
             "icon": "fa-brands fa-github",
@@ -154,8 +154,8 @@ html_theme_options = {
 # Sphinx will create the appropriate CNAME file in the build directory
 # The default is the URL of the GitHub pages
 # https://www.sphinx-doc.org/en/master/usage/extensions/githubpages.html
-github_user = "neuroinformatics-unit"
-html_baseurl = "https://photon-mosaic.neuroinformatics.dev/"
+github_user = "photon-mosaic"
+html_baseurl = "https://pipeline.photon-mosaic.org/"
 sitemap_url_scheme = "{link}"
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -192,5 +192,5 @@ html_logo = "_static/logo.png"
 linkcheck_ignore = [
     "https://neuroinformatics.zulipchat.com/#narrow/channel/500681-photon-mosaic",
     "https://www.sciencedirect.com/science/article/pii/S089662731930889X",
-    "https://photon-mosaic.neuroinformatics.dev/*",
+    "https://pipeline.photon-mosaic.org/*",
 ]
