@@ -1,14 +1,14 @@
 (user_guide/configuration)=
 # Configuration
 
-The configuration system in `photon-mosaic` is designed to be flexible and user-friendly. It allows you to customize the behavior of the pipeline at different levels.
+The configuration system in `photon-mosaic-pipeline` is designed to be flexible and user-friendly. It allows you to customize the behavior of the pipeline at different levels.
 
 ## Configuration Files
 
 ### User Configuration
-On first run, photon-mosaic will create a user config at `~/.photon_mosaic/config.yaml` if it does not exist. This serves as your default configuration.
+On first run, `photon-mosaic-pipeline` will create a user config at `~/.photon_mosaic/config.yaml` if it does not exist. This serves as your default configuration.
 
-`photon-mosaic` expects you to organise your data in a project directory that follows the [NeuroBlueprint](https://neuroblueprint.neuroinformatics.dev/) specification. Raw data lives under `<project_path>/rawdata/`, and derivatives are written next to it under `<project_path>/derivatives/`. See the [data input documentation](data_input.md) for the required directory layout.
+`photon-mosaic-pipeline` expects you to organise your data in a project directory that follows the [NeuroBlueprint](https://neuroblueprint.neuroinformatics.dev/) specification. Raw data lives under `<project_path>/rawdata/`, and derivatives are written next to it under `<project_path>/derivatives/`. See the [data input documentation](data_input.md) for the required directory layout.
 
 You set the project directory with `--project_path` on the first run:
 
