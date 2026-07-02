@@ -38,8 +38,8 @@ See [issues on GitHub](https://github.com/neuroinformatics-unit/photon-mosaic/is
 Photon-mosaic requires **Python 3.11** or **3.12**.
 
 ```bash
-conda create -n photon-mosaic python=3.12
-conda activate photon-mosaic
+conda create -n photon-mosaic-pipeline python=3.12
+conda activate photon-mosaic-pipeline
 pip install photon-mosaic
 ```
 
