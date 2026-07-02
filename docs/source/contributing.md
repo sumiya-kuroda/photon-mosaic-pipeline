@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Contributions to ``photon-mosaic`` are very welcome and appreciated. This could be
+Contributions to ``photon-mosaic-pipeline`` are very welcome and appreciated. This could be
 fixing a bug, improving the documentation or developing a new feature.
 
 If you're unsure about any part of the contributing process or have any questions, please
@@ -11,7 +11,7 @@ and [opening a pull request](#pull-requests).
 
 ## Creating a development environment
 
-To install ``photon-mosaic`` for development, first the
+To install ``photon-mosaic-pipeline`` for development, first the
 [GitHub repository](https://github.com/photon-mosaic/photon-mosaic-pipeline)
 should be cloned. Then, you can change-directory
 to the cloned repository and run pip install with the developer tag:

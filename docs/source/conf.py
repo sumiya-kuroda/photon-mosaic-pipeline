@@ -20,7 +20,7 @@ autodoc_mock_imports = []
 # use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath("../.."))
 
-project = "photon-mosaic"
+project = "photon-mosaic-pipeline"
 copyright = "2025, University College London"
 author = "Laura Porta"
 try:
@@ -106,7 +106,7 @@ exclude_patterns = [
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 html_theme = "pydata_sphinx_theme"
-html_title = "photon-mosaic"
+html_title = "photon-mosaic-pipeline"
 
 # Hide primary sidebar in user and contributing guides
 html_sidebars = {
