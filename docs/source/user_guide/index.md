@@ -32,7 +32,7 @@ Basic Snakemake tutorial to get you started.
 :link: preprocessing
 :link-type: doc
 
-Learn about the preprocessing steps available in photon-mosaic-pipeline.
+Learn about the preprocessing steps available in `photon-mosaic-pipeline`.
 :::
 
 :::{grid-item-card} 🗂️ Data input
