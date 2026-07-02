@@ -16,7 +16,7 @@
 >
 > `photon-mosaic-pipeline` (this repository) is the complementary package for *running the analysis you settled on* as a reproducible, batch-processed workflow at scale.
 >
-> Both are part of the broader **PhotonMosaic** framework, and we plan to integrate the two so the pipeline can run the methods you prototype with the API.
+> Both are part of the broader [**PhotonMosaic** framework](photon-mosaic.org), and we plan to integrate the two so the pipeline can run the methods you prototype with the API.
 
 Each analysis step is integrated into an automated workflow, allowing you to chain preprocessing, registration, signal extraction, and post-processing steps into a single, reproducible pipeline. The design prioritizes usability for labs that process many imaging sessions and need to scale across an HPC cluster.
 
