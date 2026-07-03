@@ -1,7 +1,7 @@
 (user_guide/snakemake_tutorial)=
 # Basic Snakemake Tutorial
 
-With `photon-mosaic`, you can run a Snakemake workflow that automatically executes the necessary steps to process your data. The workflow is included in the installed package and can be customized using a YAML configuration file.
+With `photon-mosaic-pipeline`, you can run a Snakemake workflow that automatically executes the necessary steps to process your data. The workflow is included in the installed package and can be customized using a YAML configuration file.
 
 The pipeline expects a [NeuroBlueprint](https://neuroblueprint.neuroinformatics.dev/)-compliant project at `--project_path`, with raw TIFFs under `rawdata/sub-*/ses-*/funcimg/`. Each `(subject, session)` is processed in parallel, and results are written to a mirrored layout under `derivatives/`. See the [data input documentation](data_input.md) for the required structure.
 
