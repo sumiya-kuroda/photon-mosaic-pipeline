@@ -40,11 +40,9 @@ Photon-mosaic requires **Python 3.11** or **3.12**.
 ```bash
 conda create -n photon-mosaic-pipeline python=3.12
 conda activate photon-mosaic-pipeline
-pip install photon-mosaic
-```
-
-To install with developer tools (e.g., testing and linting):
-
-```bash
-pip install 'photon-mosaic[dev]'
+pip install photon-mosaic-pipeline
+pip uninstall torch
+pip install torch==2.8.0 torchvision --index-url https://download.pytorch.org/whl/cu126
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+pip install -U git+https://github.com/neuroinformatics-unit/suite2p@add-chan2-anat
 ```
